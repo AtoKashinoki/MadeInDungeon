@@ -2,8 +2,27 @@
 
 ## data frame
 
+### file frame
+
+- CodingTools
+  - \_\_init__.py
+  - Definition.py
+  - Inheritance.py
+  - Type.py
+
+- GameEngine
+  - \_\_init__.py
+  - Engines.py
+
+- MadeInDungeon
+  - \_\_init__.py
+  - Setting.py
+  - Object.py
+  - MapGenerator.py
+  - Game.py
+
 ### global values
- - Setup
+ - Setting
    - Player
      - hp: int
      - atk: int
