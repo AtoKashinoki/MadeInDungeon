@@ -1,7 +1,7 @@
 """
     CodingTools.Inheritance
 
-This file contain inheritance classes for developing system.
+This file contain inheritance classes for developing systems.
 """
 
 

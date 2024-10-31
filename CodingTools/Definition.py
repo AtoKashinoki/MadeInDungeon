@@ -1,7 +1,7 @@
 """
     CodingTools.Definition
 
-This file contain definition values for developing system.
+This file contain definition values for developing systems.
 """
 
 

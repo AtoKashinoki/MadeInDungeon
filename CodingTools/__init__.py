@@ -1,7 +1,7 @@
 """
     CodingTools
 
-This module contain processes for developing processes.
+This module contain processes for developing systems.
 """
 
 

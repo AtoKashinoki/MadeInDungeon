@@ -1,7 +1,7 @@
 """
     CodingTools.Function
 
-This file is contain functions for developing system.
+This file is contain functions for developing systems.
 """
 
 
