@@ -1,5 +1,8 @@
 from CodingTools.Types import Position
 from Setting import Setting
+import random
+from copy import deepcopy
+import math 
 
 class Object:
     position: Position
@@ -40,8 +43,20 @@ class Player(Charactor):
             _section
         )
 
-    def move_process(self, _input, _map):
-        self.position.move(self.move_range[_input])
+    def move_process(self, _map):
+        try:
+            now_pos = deepcopy(self.position)
+            done = False
+            while not done:
+                self.position.move(self.move_range[input("Enter move direction: ")])
+                if self.check_wall(_map):
+                    self.position = now_pos
+                    continue
+                done = True
+                ...
+
+        except KeyError:
+            self.move_process(_map)
         return
 
 class Enemy(Charactor):
@@ -55,7 +70,22 @@ class Enemy(Charactor):
             _direction,
             _section
         )
+        self._mode = False
         return
+    
+    def move_process(self, _mode, _map, _player):
+        now_pos = (self.position.x, self.position.y)
+
+        if _mode :
+            if ((self.position.x - _player.position.x) + (self.position.y - _player.position.y) == 1):
+                pass
+        elif not _mode:
+            while True:
+                self.position.move((random.randint(-1, 1), random.randint(-1, 1)))
+                if self.check_wall(_map):
+                    self.position = now_pos
+                else:
+                    break
 
     ...
 
