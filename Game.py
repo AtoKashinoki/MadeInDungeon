@@ -1,16 +1,26 @@
-from CodingTools.Inheritance import DataClass
+
+def create_map():
+    dungeon_map = [
+        [
+            0 if 0 < x < 19 and 0 < y < 19 else 1
+            for x in range(20)
+        ]
+        for y in range(20)
+    ]
+
+    return dungeon_map
 
 
-class Setting():
-    class Player(DataClass):
-        hp: int
-        atk: int
-        move_range: dict[str, tuple[int, int]]
-        atk_range: dict[str, tuple[int, int]]
+def hierarchy_process():
+    # ダンジョンを生成して変数に保管
+    d_map = create_map()
 
-    class Enemy(DataClass):
-        hp: int
-        atk: int
-        move_range: dict[str, tuple[int, int]]
-        atk_range: dict[str, tuple[int, int]]
-        options: dict[str, int | float]
+    return d_map
+
+
+def game_loop(d_map):
+    return
+
+
+print(create_map())
+>>>>>>> 072b04aba13311080832b87a33af518efc33d1d0
