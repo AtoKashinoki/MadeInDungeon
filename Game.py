@@ -23,4 +23,4 @@ def game_loop(d_map):
 
 
 print(create_map())
->>>>>>> 072b04aba13311080832b87a33af518efc33d1d0
+
