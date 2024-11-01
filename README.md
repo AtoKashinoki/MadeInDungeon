@@ -39,7 +39,7 @@
 
 ### object class
 - Object
-  - position: tuple[int, int]
+  - position: Pos
 
 
 - Charactor(Object)
@@ -74,6 +74,4 @@
 
 
 - Map
-  - size: tuple[int, int]
-  - revers_key: dict[int, MapObject]
-  - data: list[list[int]]
+  - generator: function
