@@ -18,8 +18,13 @@
 
 #### MadeInDungeon
 
+
+- Definition.py
+  ゲームの定数の定義
 - Setting.py
   ゲームの設定ファイル
+- Texture.py
+  ゲームの見た目に関するファイル
 - Object.py
   オブジェクトのクラス
 - MapGenerator.py
