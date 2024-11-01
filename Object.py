@@ -23,6 +23,10 @@ class Charactor(Object):
         self.atk_range = _atk_range
         self.direction = _direction
         self.section = _section
+        return
+
+    def check_wall(self, _map: list[list[int, ...], ...]):
+        return _map[self.position[0]][self.position[1]] == 1
 
 class Player(Charactor):
     def __init__(self, _pos, _direction, _section):
@@ -36,7 +40,7 @@ class Player(Charactor):
             _section
         )
 
-    def move_process(self, _input):
+    def move_process(self, _input, _map):
         self.position.move(self.move_range[_input])
         return
 

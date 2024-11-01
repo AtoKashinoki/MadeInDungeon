@@ -23,4 +23,3 @@ def game_loop(d_map):
 
 
 print(create_map())
-
