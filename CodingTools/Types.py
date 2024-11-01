@@ -8,12 +8,12 @@ This file contain types for developing systems.
 """ imports """
 
 
-from .Definition import Index
-
-
 """ Position """
 
 
+
+
+from .Definition import Index
 class Position(object):
     """ Manage position type """
 
@@ -33,13 +33,13 @@ class Position(object):
     def y(self) -> int | float: return self.__data[Index.Y]
     @property
     def z(self) -> int | float: return self.__data[Index.Z]
-
     """ processes """
     # instance
-    def __init__(self, dimension: int) -> None:
+
+    def __init__(self, *args: int) -> None:
         """ Initialize value """
-        self.__dimension = dimension
-        self.__data = [0 for _ in range(dimension)]
+        self.__dimension = len(args)
+        self.__data = args
         return
 
     def __repr__(self):
@@ -54,7 +54,7 @@ class Position(object):
         """ Get position value """
         return self.__data[index]
 
-    def __iter__(self) ->iter:
+    def __iter__(self) -> iter:
         return iter(self.__data)
 
     def __len__(self) -> int:
