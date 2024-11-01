@@ -43,7 +43,7 @@ def game_loop(d_map, player: Player):
         texture = "{}" * len(d_map[0])
         [print(texture.format(*_line)) for _line in print_map]
         print(player.position)
-        player.move_process(input("input move direction: "))
+        player.move_process(d_map)
         if d_map[player.position[0]][player.position[1]] == 2:
             break
 
