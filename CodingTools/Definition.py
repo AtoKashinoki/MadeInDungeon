@@ -26,3 +26,13 @@ class ProtectMember(DefinitionSkeleton):
     """ Protect member definitions """
     frame: str = "_{}{}"
     ...
+
+
+""" index """
+
+
+class Index(DefinitionSkeleton):
+    """ Index definitions """
+    X, Y, Z = range(3)
+    ...
+

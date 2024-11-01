@@ -35,7 +35,7 @@
      - atk_range: tuple[tuple[int, int]]
      - options: dict[str, int | float]
    - Map
-     - size: tuple[int, int]
+     - size: tuple[int, int]  
 
 ### object class
 - Object
