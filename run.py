@@ -3,6 +3,6 @@ from Object import Player
 from CodingTools.Types import Position
 
 if __name__ == '__main__':
-    player: Player = Player(Position(2), 0, 0)
+    player: Player = Player(Position(1, 1), 0, 0)
     hierarchy_process(player)
     ...
