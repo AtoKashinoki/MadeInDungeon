@@ -36,8 +36,9 @@ class Player(Charactor):
             _section
         )
 
-    def move_process(self, input):
-        self.position.move(self.move_range[f"{input}"])
+    def move_process(self, _input):
+        self.position.move(self.move_range[_input])
+        return
 
 class Enemy(Charactor):
     def __init__(self, _pos, _direction, _section):
@@ -50,15 +51,17 @@ class Enemy(Charactor):
             _direction,
             _section
         )
-    def move_process():
-        pass
+        return
 
-class 
+    ...
 
-pos = Position(2)
-enemy = []
-print(pos)
-print(type(pos.data))
-player = Player(pos, 0, 0)
-player.move_process("N")
-print(player.position)
+
+if __name__ == '__main__':
+
+    pos = Position(2)
+    enemy = []
+    print(pos)
+    print(type(pos.data))
+    player = Player(pos, 0, 0)
+    player.move_process("N")
+    print(player.position)
