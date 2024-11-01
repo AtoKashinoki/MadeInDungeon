@@ -4,22 +4,30 @@
 
 ### file frame
 
+### modules
+
 - CodingTools
   - \_\_init__.py
+    CodingTools初期化処理
   - Definition.py
+    今回のプログラムに利用する共通定数
   - Inheritance.py
+    DataClassの定義
   - Type.py
+    Positionクラスの定義
 
-- GameEngine
-  - \_\_init__.py
-  - Engines.py
+#### MadeInDungeon
 
-- MadeInDungeon
-  - \_\_init__.py
-  - Setting.py
-  - Object.py
-  - MapGenerator.py
-  - Game.py
+- Setting.py
+  ゲームの設定ファイル
+- Object.py
+  オブジェクトのクラス
+- MapGenerator.py
+  マップ生成に関するプロセス
+- Game.py
+  ゲーム管理に関するプロセス
+- Engines.py
+  ゲーム実行アプリケーション
 
 ### global values
  - Setting
