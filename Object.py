@@ -1,45 +1,6 @@
 from CodingTools.Types import Position
-from CodingTools.Inheritance import DataClass
+from Setting import Setting
 
-
-class Setting():
-    class Player(DataClass):
-        hp: int = 3
-        atk: int = 1
-        move_range: dict[str, tuple[int, int]] = {
-            "N": (0, -1),
-            "NE": (1, -1),
-            "E": (1, 0),
-            "SE": (1, 1),
-            "S": (0, 1),
-            "SW": (-1, 1),
-            "W": (-1, 0),
-            "NS": (-1, -1)
-
-        }
-        atk_range: dict[str, tuple[int, int]] = {
-            "N": ((-1, -1), (0, -1), (1, -1)),
-            "E": ((1, -1), (1, 0), (1, 1)),
-            "S": ((-1, 1), (0, 1), (1, 1)),
-            "W": ((-1, -1), (-1, 0), (-1, 1)),
-        }
-
-    class Enemy(DataClass):
-        hp: int = 2
-        atk: int = 1
-        move_range: dict[str, tuple[int, int]] = {
-            "N": (0, -1),
-            "E": (1, 0),
-            "S": (0, 1),
-            "W": (-1, 0),
-        }
-        atk_range: dict[str, tuple[int, int]] = {
-            "N": (0, -1),
-            "E": (1, 0),
-            "S": (0, 1),
-            "W": (-1, 0),
-        }
-        options: dict[str, int | float]
 class Object:
     position: Position
 
@@ -64,21 +25,40 @@ class Charactor(Object):
         self.section = _section
 
 class Player(Charactor):
-    def __init__(self, _pos):
+    def __init__(self, _pos, _direction, _section):
         super().__init__(
-            _pos,#int 
+            _pos,#tuple 
             Setting.Player.hp,
             Setting.Player.atk,
             Setting.Player.move_range,
             Setting.Player.atk_range,
+            _direction,
+            _section
         )
 
     def move_process(self, input):
-        if (input in self.move_range):
-            ...
+        self.position.move(self.move_range[f"{input}"])
 
+class Enemy(Charactor):
+    def __init__(self, _pos, _direction, _section):
+        super().__init__(
+            _pos,#tuple 
+            Setting.Player.hp,
+            Setting.Player.atk,
+            Setting.Player.move_range,
+            Setting.Player.atk_range,
+            _direction,
+            _section
+        )
+    def move_process():
+        pass
 
-pos = Position()
-player = Player(pos)
+class 
+
+pos = Position(2)
+enemy = []
+print(pos)
+print(type(pos.data))
+player = Player(pos, 0, 0)
 player.move_process("N")
-print(player)
+print(player.position)
