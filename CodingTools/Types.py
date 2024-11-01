@@ -42,6 +42,9 @@ class Position(object):
         self.__data = [0 for _ in range(dimension)]
         return
 
+    def __repr__(self):
+        return f"{self.data}"
+
     def __setitem__(self, index: int, value: int | float) -> None:
         """ Set position value """
         self.__data[index] = value

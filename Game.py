@@ -10,16 +10,15 @@ def create_map():
     return dungeon_map
 
 
-def game_loop(d_map):
-    [print(_line) for _line in d_map]
-    return
-
-
 def hierarchy_process():
     # ダンジョンを生成して変数に保管
     d_map = create_map()
-    game_loop(d_map)
+
     return d_map
 
 
-hierarchy_process()
+def game_loop(d_map):
+    return
+
+
+print(create_map())
