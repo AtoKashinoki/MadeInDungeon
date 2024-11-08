@@ -10,6 +10,7 @@ This file contain game class of MadeInDungeon.
 
 from copy import deepcopy
 from Object import Player
+import create_dungeon
 import MapGenerator
 import Texture
 
@@ -20,7 +21,7 @@ import Texture
 
 def hierarchy_process(player: Player):
     # ダンジョンを生成して変数に保管
-    d_map = MapGenerator.test(20, 15)
+    d_map = create_dungeon.generate_dungeon(25, 20)
     game_loop(d_map, player)
 
     return d_map
@@ -30,7 +31,7 @@ def game_loop(d_map, player: Player):
     done = False
     while not done:
         print_map = Texture.convert(deepcopy(d_map))
-        print_map[player.position[1]][player.position[0]] = "▲"
+        print_map[player.position[1]][player.position[0]] = "〇"
         texture = "{}" * len(d_map[0])
         [print(texture.format(*_line)) for _line in print_map]
         print(player.position)

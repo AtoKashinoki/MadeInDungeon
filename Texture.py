@@ -14,9 +14,10 @@ This file contain texture processes of MadeInDungeon.
 def convert(_map: list[list[int]]) -> list[list[str]]:
     return [
         [
-            "　" if d == 0 else
-            " ◰" if d == 2 else
-            "■"
+            "　" if d <= -3 else
+            "🔲" if d == -1 else
+            " ◰" if d == -2 else
+            "No"
             for d in line
         ]
         for line in _map
