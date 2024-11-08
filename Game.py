@@ -63,6 +63,21 @@ class GameLoop(ApplicationEngine):
     ...
 
 
+def game_process():
+    player = Player((0, 0), 0, 0)
+    for i in range(3):
+        hierarchy_process(player)
+        if player.hp <= 0:
+            print("Game Over")
+            break 
+        else:
+            print(f"{i + 1}F Clear")
+    else:
+        pass
+
+    return
+
+
 if __name__ == '__main__':
-    hierarchy_process(Player((0, 0), 0, 0))
+    game_process()
     ...
