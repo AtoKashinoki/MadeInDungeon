@@ -10,6 +10,7 @@ This file contain game class of MadeInDungeon.
 
 from copy import deepcopy
 from Object import Player
+from MapGenerator import clear_floor
 import create_dungeon
 import MapGenerator
 import Texture
@@ -49,6 +50,7 @@ def game_loop(d_map, player: Player):
 def game_process():
     player = Player((0, 0), 0, 0)
     for i in range(3):
+        print(f"{i + 1}F Start")
         hierarchy_process(player)
         if player.hp <= 0:
             print("Game Over")
@@ -56,6 +58,8 @@ def game_process():
         else:
             print(f"{i + 1}F Clear")
     else:
-        pass
+        clear_map = clear_floor(5, 5)
+        game_loop(clear_map, player)
+        print("Game Clear")
 
     return
