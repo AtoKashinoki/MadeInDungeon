@@ -20,7 +20,7 @@ import Texture
 
 def hierarchy_process(player: Player):
     # ダンジョンを生成して変数に保管
-    d_map =MapGenerator.test(20, 15)
+    d_map = MapGenerator.test(20, 15)
     game_loop(d_map, player)
 
     return d_map
@@ -42,5 +42,19 @@ def game_loop(d_map, player: Player):
 
         if player.hp <= 0:
             break
+
+    return
+
+def game_process():
+    player = Player((0, 0), 0, 0)
+    for i in range(3):
+        hierarchy_process(player)
+        if player.hp <= 0:
+            print("Game Over")
+            break 
+        else:
+            print(f"{i + 1}F Clear")
+    else:
+        pass
 
     return
