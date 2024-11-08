@@ -192,7 +192,7 @@ class ApplicationEngine(ABC):
     # instance
     class Config(DataClass):
         fps: int
-        input_sys = Msvcrt
+        input_sys = MsvcrtSet
         rendering_sys = Console
         ...
 

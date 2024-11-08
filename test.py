@@ -20,7 +20,7 @@ Key = Msvcrt.Key
 class TypeWriter(ApplicationEngine):
     __typed: str
     def __init__(self):
-        super().__init__(_fps=1)
+        super().__init__(_fps=10)
         self.__typed = ""
         return
 
