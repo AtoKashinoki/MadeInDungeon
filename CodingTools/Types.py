@@ -65,6 +65,9 @@ class Position(object):
         self.__data = [
             _pos + _diff for _pos, _diff in zip(self.__data, movement)
         ]
-        return
+        return self
+    
+    def __eq__(self, value: tuple) -> bool:
+        return self.__data[0] == value[0] and self.__data[1] == value[1]
 
     ...
