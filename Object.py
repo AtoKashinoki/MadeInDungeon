@@ -8,8 +8,13 @@ import random
 class Object:
     position: Position
 
+<<<<<<< HEAD
     def __init__(self, _pos: tuple):
         self.position = Position(*_pos)
+=======
+    def __init__(self, _pos: Position):
+        self.position = Position(_pos)
+>>>>>>> 0f13d629a6ca5f93fbe7dfe594fe5207a8263cd7
 
 class Charactor(Object):
     hp: int 
@@ -72,7 +77,11 @@ class Player(Charactor):
             while not done:
                 self.position.move(self.move_range[input("Enter move direction: ")])
                 if self.check_wall(_map):
+<<<<<<< HEAD
                     self.position = Position(now_pos)
+=======
+                    self.position = Position(*now_pos)
+>>>>>>> 0f13d629a6ca5f93fbe7dfe594fe5207a8263cd7
                     continue
                 done = True
                 ...
