@@ -135,35 +135,46 @@ def generate_dungeon(width, height):
                         leaves.append(leaf.right_child)
                         split_successful = True
 
+    """
+    数値の意味
+    -1    : 壁
+    -2    : 階段
+    -3    : 宝
+    -4    : 道
+    -5~-n : 部屋番号
+    """
     # 部屋と認識されている場所に番号を入れる
-    room_number = "２"
-    root.create_rooms(room_number)
+    root.create_rooms(0)
+    room_number = -5
 
-    dungeon = [['🔲' for _ in range(width)] for _ in range(height)]
+    #壁の数値として-1を入れる
+    dungeon = [[-1 for _ in range(width)] for _ in range(height)]
 
     for leaf in leaves:
         if leaf.room:
             (x, y, w, h) = leaf.room
             for i in range(x, x + w):
                 for j in range(y, y + h):
-                    dungeon[j][i] = str(leaf.room_number)  # 部屋番号を入れる
+                    dungeon[j][i] = room_number # 部屋番号を入れる(-4~-n)
+            room_number += -1
         for hall in leaf.halls:
             (x, y, w, h) = hall
             for i in range(x, x + w):
                 for j in range(y, y + h):
-                    dungeon[j][i] = '　'  # 道は全角スペース
+                    dungeon[j][i] = -4  # 道-3
 
     return dungeon
 
 
 def display_dungeon(dungeon):
     for row in dungeon:
-        print("".join(row))
+        print(" ".join(f"{cell:2}" for cell in row))
 
 
 # ダンジョンのサイズ
 dungeon_width = 25
 dungeon_height = 20
 
-dungeon = generate_dungeon(dungeon_width, dungeon_height)
-display_dungeon(dungeon)
+if __name__ == '__main__':
+    dungeon = generate_dungeon(dungeon_width, dungeon_height)
+    display_dungeon(dungeon)
