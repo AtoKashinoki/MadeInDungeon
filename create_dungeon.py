@@ -9,7 +9,7 @@ class Leaf:
     # MAX_LEAF_SIZE：リーフの分割を行うかどうかを決定する際の最大サイズを指定してる。
     # リーフの幅や高さがこの値を超えている場合、さらに分割される可能性があるが、
     # このサイズ以下なら、分割されずそのまま部屋や通路として利用される可能性が高くなる。
-    MAX_LEAF_SIZE = 20
+    MAX_LEAF_SIZE = 18
 
     def __init__(self, x, y, width, height):
         self.x = x
@@ -61,8 +61,9 @@ class Leaf:
                                  self.right_child.get_room())
         else:
             while True:
-                room_width = random.randint(3, min(self.width - 2, 6))
-                room_height = random.randint(3, min(self.height - 2, 6))
+                # 部屋の大きさをランダムで決定
+                room_width = random.randint(3, min(self.width - 2, 5))
+                room_height = random.randint(3, min(self.height - 2, 5))
                 # 幅と高さの差が±1に収まるように制約を追加
                 if abs(room_width - room_height) <= 1:
                     break
@@ -140,28 +141,83 @@ def generate_dungeon(width, height):
     -1    : 壁
     -2    : 階段
     -3    : 宝
-    -4    : 道
-    -5~-n : 部屋番号
+    -4    : 鍵
+    -5    : 柱 
+    -6    : 道
+    -7~-n : 部屋番号
     """
     # 部屋と認識されている場所に番号を入れる
     root.create_rooms(0)
-    room_number = -5
+    room_number = -7
 
-    #壁の数値として-1を入れる
+    # 壁の数値として-1を入れる
     dungeon = [[-1 for _ in range(width)] for _ in range(height)]
 
     for leaf in leaves:
         if leaf.room:
             (x, y, w, h) = leaf.room
+            center_coordinates = []  # 外周を除いた真ん中の部分の座標を入れるリスト
+            count_room_number = 0  # 部屋のマス数の合計
             for i in range(x, x + w):
                 for j in range(y, y + h):
-                    dungeon[j][i] = room_number # 部屋番号を入れる(-4~-n)
-            room_number += -1
+                    dungeon[j][i] = room_number
+                    count_room_number += 1
+                    if i != x and i != (x + w) - 1 and j != y and j != (y + h) - 1:  # 外周を除く
+                        center_coordinates.append([i, j])
+            # print(f"外周を除いた真ん中の部分の座標{center_coordinates}部屋のマス数の合計{
+            #       count_room_number}")
+            if len(center_coordinates) != 0:  # 3*3以外の場合
+                if count_room_number >= 20:
+                    # 部屋の合計マス数が25以上であれば柱を2個生成する
+                    for i in range(2):
+                        pillar_coordinates = center_coordinates.pop(random.randint(
+                            0, len(center_coordinates)-1))
+                        dungeon[pillar_coordinates[1]
+                                ][pillar_coordinates[0]] = -5
+                else:
+                    pillar_coordinates = center_coordinates.pop(random.randint(
+                        0, len(center_coordinates)-1))
+                    dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = -5
+            elif len(center_coordinates) == 0:  # 3*3の場合
+                pillar_coordinates = center_coordinates[0][0]
+                dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = -5
+            room_number += -1  # 部屋番号を入れる(-4~-n)
+
         for hall in leaf.halls:
             (x, y, w, h) = hall
             for i in range(x, x + w):
                 for j in range(y, y + h):
-                    dungeon[j][i] = -4  # 道-3
+                    dungeon[j][i] = -6  # 道-3
+
+    # ここで階段の生成
+    stair_room = random.randint(room_number, -7)
+    matching_coordinates_stair = []  # 階段のある部屋のマスすべての部屋の座標を取得
+    inner_stair_room = []
+    for j in range(len(dungeon)):
+        for i in range(len(dungeon[j])):
+            if dungeon[j][i] == stair_room:
+                matching_coordinates_stair.append([i, j])
+    for j in range(len(matching_coordinates_stair)):
+        for i in range(len(matching_coordinates_stair[j])):
+            if i != 0 and i != len(matching_coordinates_stair[i]) and j != 0 and j != len(matching_coordinates_stair):
+                inner_stair_room.append([j, i])
+    stair_coordinates = inner_stair_room[random.randint(
+        0, len(inner_stair_room)) - 1]
+    dungeon[stair_coordinates[1]][stair_coordinates[0]] = -2
+    print(f"##{room_number}")
+    print(f"##{stair_room}")
+    print(f"##{inner_stair_room}")
+
+    # ここで鍵の位置を決めてる
+    key_room = random.randint(room_number, -7)
+    matching_coordinates_key_room = []  # 鍵のある部屋のマスすべての部屋の座標を取得
+    for j in range(len(dungeon)):
+        for i in range(len(dungeon[j])):
+            if dungeon[j][i] == key_room:
+                matching_coordinates_key_room.append([i, j])
+    key_coordinates = matching_coordinates_key_room[random.randint(
+        0, len(matching_coordinates_key_room)) - 1]
+    dungeon[key_coordinates[1]][key_coordinates[0]] = -4
 
     return dungeon
 
@@ -169,6 +225,22 @@ def generate_dungeon(width, height):
 def display_dungeon(dungeon):
     for row in dungeon:
         print(" ".join(f"{cell:2}" for cell in row))
+    for row in dungeon:
+        display_row = ""
+        for cell in row:
+            if cell == -1:
+                display_row += "🔲"
+            elif cell == -2:
+                display_row += "＃"  # 階段:全角スペース
+            elif cell == -4:
+                display_row += "＄"
+            elif cell == -5:
+                display_row += "｜"  # 柱S
+            elif cell == -6:
+                display_row += "　"  # 道:全角スペース
+            else:
+                display_row += "　"  # 他の数値はそのまま表示
+        print(display_row)
 
 
 # ダンジョンのサイズ
