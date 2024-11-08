@@ -8,7 +8,7 @@ class Object:
     position: Position
 
     def __init__(self, _pos: Position):
-        self.position = _pos
+        self.position = Position(_pos)
 
 class Charactor(Object):
     hp: int 
@@ -50,7 +50,7 @@ class Player(Charactor):
             while not done:
                 self.position.move(self.move_range[input("Enter move direction: ")])
                 if self.check_wall(_map):
-                    self.position = now_pos
+                    self.position = Position(*now_pos)
                     continue
                 done = True
                 ...

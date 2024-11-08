@@ -18,7 +18,7 @@ from Engine import SystemKey
 """ values """
 
 
-game_file = f"{getcwd()}\\test.py"
+game_file = f"{getcwd()}\\Game.py"
 
 
 """ run processes """

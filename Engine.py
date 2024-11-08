@@ -210,12 +210,12 @@ class ApplicationEngine(ABC):
 
     # abstract
     @abstractmethod
-    def __update__(self, ):
+    def __update__(self):
         """ Execute frame processing """
         return
 
     @abstractmethod
-    def __rendering__(self, ):
+    def __rendering__(self):
         """ Execute rendering processing """
         return
 
