@@ -8,13 +8,8 @@ import random
 class Object:
     position: Position
 
-<<<<<<< HEAD
     def __init__(self, _pos: tuple):
         self.position = Position(*_pos)
-=======
-    def __init__(self, _pos: Position):
-        self.position = Position(_pos)
->>>>>>> 0f13d629a6ca5f93fbe7dfe594fe5207a8263cd7
 
 class Charactor(Object):
     hp: int 
@@ -43,21 +38,6 @@ class Charactor(Object):
                 return 1
         return 0
 
-    def move_process(self, _map):
-        try:
-            now_pos = deepcopy(self.position)
-            done = False
-            while not done:
-                self.position.move(self.move_range[input("Enter move direction: ")])
-                if self.check_wall(_map):
-                    self.position = now_pos
-                    continue
-                done = True
-                ...
-
-        except KeyError:
-            self.move_process(_map)
-        return
 class Player(Charactor):
     def __init__(self, _pos, _direction, _section):
         super().__init__(
@@ -70,24 +50,29 @@ class Player(Charactor):
             _section
         )
 
-    def move_process(self, _map):
+    def move_process(self, _map, _enemys):
         try:
             now_pos = deepcopy(self.position)
             done = False
             while not done:
-                self.position.move(self.move_range[input("Enter move direction: ")])
+                key = input("Enter Move or Attack direction: ")
+                if key in self.move_range:
+                    self.position.move(self.move_range[key])
+                    done = True
+                elif key in self.atk_range:
+                    for dir in range(len(self.atk_range[key])):
+                        for enemy in range(len(_enemys)):
+                            if enemy.position ==  tuple([_rs - _p for _rs, _p in zip(dir, self.position)]):
+                                enemy.hp -= 1
+                    done = True
+                        
                 if self.check_wall(_map):
-<<<<<<< HEAD
                     self.position = Position(now_pos)
-=======
-                    self.position = Position(*now_pos)
->>>>>>> 0f13d629a6ca5f93fbe7dfe594fe5207a8263cd7
+                    done = False
                     continue
-                done = True
-                ...
-
+                
         except KeyError:
-            self.move_process(_map)
+            self.move_process(_map, _enemys)
         
         return
 class Enemy(Charactor):
@@ -166,9 +151,9 @@ class Enemy(Charactor):
         _map = self.search_direction(_map, [self.position, ], 2, goal.position)
         result_route = []
         now_pos = goal.position
-        print(_map)
+        #print(_map)
         now_number = _map[0][goal.position.y][goal.position.x]
-        print(self.position, "AA")
+        #print(self.position, "AA")
         #print(_map)
         while True:
             route = []
@@ -178,9 +163,9 @@ class Enemy(Charactor):
                 if _map[0][_to_pos.y][_to_pos.x] == now_number -1:
                     route.append(_to_pos)
 
-            print(result_route)
+            #print(result_route)
             if self.position in result_route:
-                print("V")
+                #print("V")
                 break
             if len(route) == 2:
                 result_route.append(route[0]) if random.randint(0, 1) > 0.5 else result_route.append(route[1])
