@@ -23,9 +23,37 @@ Key = Msvcrt.Key
 def hierarchy_process(player: Player):
     # ダンジョンを生成して変数に保管
     d_map = create_dungeon.generate_dungeon(25, 20)
-    game_loop = GameLoop(d_map, player)
-    player = game_loop.exe()
+    player = game_loop(d_map, player)
     return  player
+
+
+def print_map(d_map, player):
+    _print_map = Texture.convert(deepcopy(d_map))
+    _print_map[player.position[1]][player.position[0]] = "〇"
+    texture = "{}" * len(d_map[0])
+    [print(texture.format(*_line)) for _line in _print_map]
+    print(player.position)
+    return
+
+
+def game_loop(d_map, player):
+
+    print_map(d_map, player)
+
+    done = False
+    while not done:
+        player.move_process(d_map, [])
+        if d_map[player.position[0]][player.position[1]] == -2:
+            return player
+
+        # Enemy processes
+
+        if player.hp <= 0:
+            return player
+
+        print_map(d_map, player)
+
+    return
 
 
 class GameLoop(ApplicationEngine):
