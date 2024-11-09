@@ -23,7 +23,7 @@ class GameLoop(ApplicationEngine):
 
     def __update__(self):
         if self.attack_f:
-            sleep(0.2)
+            sleep(0.15)
             ...
 
         if 224 in self.input:
