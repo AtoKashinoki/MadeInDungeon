@@ -11,18 +11,27 @@ from copy import deepcopy
 from Object import Player
 import create_dungeon
 import Texture
-from Engine import ApplicationEngine, Exit
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
+from GameLoopEngine import GameLoop
 
 
 """ Game processes """
+
+
+human_play_mode: bool = True
 
 
 
 def hierarchy_process(player: Player):
     # ダンジョンを生成して変数に保管
     d_map = create_dungeon.generate_dungeon(25, 20)
+
+    if human_play_mode:
+        game_loop_ = GameLoop(d_map, player)
+        game_loop_.exe()
+        return game_loop_.player
+
     player = game_loop(d_map, player)
     return  player
 
@@ -54,41 +63,6 @@ def game_loop(d_map, player):
         print_map(d_map, player)
 
     return
-
-
-class GameLoop(ApplicationEngine):
-    def __init__(self, d_map, player):
-        super().__init__()
-        self.d_map = d_map
-        self.player = player
-        self.game_over = False
-        return
-
-    def __update__(self):
-        if Key.Ins in self.input: self.reboot()
-        if Key.Del in self.input: raise Exit
-
-        self.player.move_process(self.d_map, [])
-        if self.d_map[self.player.position[0]][self.player.position[1]] == -2:
-            raise Exit
-
-        # Enemy processes
-
-        if self.player.hp <= 0:
-            raise Exit
-
-        return
-
-    def __rendering__(self):
-        player = self.player
-        print_map = Texture.convert(deepcopy(self.d_map))
-        print_map[player.position[1]][player.position[0]] = "〇"
-        texture = "{}" * len(self.d_map[0])
-        [self.print(texture.format(*_line)) for _line in print_map]
-        self.print(player.position)
-        return
-
-    ...
 
 
 def game_process():

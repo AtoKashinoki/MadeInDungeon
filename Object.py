@@ -14,7 +14,7 @@ class Charactor(Object):
     hp: int 
     atk: int
     move_range: dict[str, tuple[int, int]]
-    atk_range: dict[str, [int, int]]
+    atk_range: dict[str, tuple[tuple[int, int], ...]]
     direction: int
     section: int
 
@@ -73,6 +73,29 @@ class Player(Charactor):
 
         return
 
+    def game_loop_mp(self, _map, _enemies, _input_key):
+        now_pos = deepcopy(self.position)
+
+        done = False
+        while not done:
+            key = _input_key
+
+            if key in self.move_range:
+                self.position.move(self.move_range[key])
+                if self.check_wall(_map):
+                    self.position = deepcopy(now_pos)
+                return ()
+
+            elif key in self.atk_range:
+                attacking = self.atk_range[key]
+                for _dir in attacking:
+                    for _enemy in _enemies:
+                        if _enemy.position ==  tuple([_rs - _p for _rs, _p in zip(_dir, self.position)]):
+                            _enemy.hp -= 1
+                return attacking
+
+        return ()
+
 class Enemy(Charactor):
     def __init__(self, _pos, _direction, _section, _type: str):
         super().__init__(
@@ -90,7 +113,7 @@ class Enemy(Charactor):
         self.move_count = 0
         return
     
-    def move_process(self, _map, _player, _Enemys):
+    def move_process(self, _map, _player, _enemies):
 
         now_pos = deepcopy(self.position)
 
@@ -105,14 +128,14 @@ class Enemy(Charactor):
                     for _rs, _p in zip(result_search[-2], self.position)
                 ])
                 self.position.move(move)
-                if self.check_wall(_map) or self.check_enemy(_Enemys):
+                if self.check_wall(_map) or self.check_enemy(_enemies):
                     self.position = now_pos
                     return
                 
         else:#プレイヤーを追いかけないとき
             if self.section == _player.section:
                 self.__mode = True
-                self.move_process(_map, _player, _Enemys)
+                self.move_process(_map, _player, _enemies)
 
             while True:
                 self.position.move((random.randint(-1, 1), random.randint(-1, 1)))

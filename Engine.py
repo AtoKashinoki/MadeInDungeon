@@ -199,12 +199,23 @@ class ApplicationEngine(ABC):
     __config: Config = None
     __input: tuple
     __rendering_sys: Rendering | None = None
+    __render_update_flag: bool
     __reboot_flag: bool
 
     """ properties """
     @property
+    def fps(self) -> int:
+        return self.__config.fps
+    @property
     def input(self) -> tuple:
         return self.__input
+    @property
+    def render_update_flag(self) -> bool:
+        return self.__render_update_flag
+    @render_update_flag.setter
+    def render_update_flag(self, flag: bool):
+        self.__render_update_flag = flag
+        return
 
     """ methods """
 
@@ -226,6 +237,7 @@ class ApplicationEngine(ABC):
         self.__config.fps = _fps
         self.__input = tuple()
         self.__rendering_sys = Console()
+        self.__render_update_flag = False
         self.__reboot_flag = False
         return
 
@@ -274,7 +286,9 @@ class ApplicationEngine(ABC):
                 ...
 
             # rendering
-            self.__rendering_sys.render(self.__rendering__)
+            if self.__render_update_flag:
+                self.__rendering_sys.render(self.__rendering__)
+                self.__render_update_flag = False
 
             # input reset
             input_sys.reset()
@@ -294,3 +308,5 @@ class ApplicationEngine(ABC):
         """ reboot game engine """
         self.__reboot_flag = True
         return
+
+    ...
