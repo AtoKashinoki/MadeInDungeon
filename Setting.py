@@ -8,12 +8,16 @@ class Setting():
         move_range: dict[str, tuple[int, int]] = {
             "W": (0, -1),
             "WD": (1, -1),
+            "DW": (1, -1),
             "D": (1, 0),
             "SD": (1, 1),
+            "DS": (1, 1),
             "S": (0, 1),
             "SA": (-1, 1),
+            "AS": (-1, 1),
             "A": (-1, 0),
-            "WA": (-1, -1)
+            "WA": (-1, -1),
+            "AW": (-1, -1),
 
         }
         atk_range: dict[str, tuple[int, int]] = {
