@@ -18,9 +18,14 @@ class GameLoop(ApplicationEngine):
         self.player = player
         self.game_over = False
         self.attacking = list()
+        self.attack_f = False
         return
 
     def __update__(self):
+        if self.attack_f:
+            sleep(0.2)
+            ...
+
         if 224 in self.input:
             if Key.Ins in self.input: self.reboot()
             if Key.Del in self.input: raise Exit
@@ -40,8 +45,8 @@ class GameLoop(ApplicationEngine):
             self.render_update_flag = True
             ...
 
-        if input_keys in self.player.move_range:
-            self.attacking.append([self.player.game_loop_mp(self.d_map, [], input_keys), self.fps])
+        if input_keys in (*self.player.move_range, *self.player.atk_range):
+            self.attacking.append([self.player.game_loop_mp(self.d_map, [], input_keys), 1])
             self.render_update_flag = True
             ...
 
@@ -60,10 +65,12 @@ class GameLoop(ApplicationEngine):
         print_map = Texture.convert(deepcopy(self.d_map))
         pp = player.position
         print_map[pp.y][pp.x] = "〇"
+        self.attack_f = False
         for attacking in self.attacking:
             for _dir in attacking[0]:
-                if print_map[pp.y][pp.x] <= "　":
-                    print_map[pp.y+_dir[1]][pp.x+_dir[0]] = " # "
+                if print_map[pp.y+_dir[1]][pp.x+_dir[0]] == "　":
+                    print_map[pp.y+_dir[1]][pp.x+_dir[0]] = "##"
+                    self.attack_f = True
                     ...
                 ...
             ...

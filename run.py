@@ -11,8 +11,7 @@ This file contain running MadeInDungeon.
 from os import getcwd
 import sys
 from time import sleep
-from CodingTools.Function import System
-from Engine import SystemKey
+from Game import game_process
 
 
 """ values """
@@ -28,12 +27,8 @@ def run_game():
     """ run game """
     print("Boot MadeInDungeon")
     sleep(2**-2)
-    _exit_code = System.run_python(game_file)
-    if _exit_code == SystemKey.REBOOT:
-        print("reboot game")
-        run_game()
-        ...
-    return _exit_code
+    game_process()
+    return 0
 
 if __name__ == '__main__':
     exit_code = run_game()
