@@ -1,8 +1,7 @@
 from CodingTools.Types import Position
 from Setting import Setting
-import random
 from copy import deepcopy
-import math 
+from time import sleep
 import random
 
 class Object:
@@ -14,8 +13,8 @@ class Object:
 class Charactor(Object):
     hp: int 
     atk: int
-    move_range: tuple[tuple[int, int]]
-    atk_range: tuple[tuple[int, int]]
+    move_range: dict[str, tuple[int, int]]
+    atk_range: dict[str, [int, int]]
     direction: int
     section: int
 
@@ -28,13 +27,14 @@ class Charactor(Object):
         self.direction = _direction
         self.section = _section
         return
+    
 
     def check_wall(self, _map: list[list[int, ...], ...]):
-        return _map[self.position[0]][self.position[1]] == 1
+        return _map[self.position[1]][self.position[0]] == -1
     
-    def check_enemy(self, enemys):#enemysは敵のクラスのリスト
-        for idx in range(len(enemys)):
-            if self.position == enemys[idx].position:
+    def check_enemy(self, _enemies):#enemysは敵のクラスのリスト
+        for idx in range(len(_enemies)):
+            if self.position == _enemies[idx].position:
                 return 1
         return 0
 
@@ -50,31 +50,29 @@ class Player(Charactor):
             _section
         )
 
-    def move_process(self, _map, _enemys):
-        try:
-            now_pos = deepcopy(self.position)
-            done = False
-            while not done:
-                key = input("Enter Move or Attack direction: ")
-                if key in self.move_range:
-                    self.position.move(self.move_range[key])
-                    done = True
-                elif key in self.atk_range:
-                    for dir in range(len(self.atk_range[key])):
-                        for enemy in range(len(_enemys)):
-                            if enemy.position ==  tuple([_rs - _p for _rs, _p in zip(dir, self.position)]):
-                                enemy.hp -= 1
-                    done = True
-                        
+    def move_process(self, _map, _enemies):
+        now_pos = deepcopy(self.position)
+
+        done = False
+        while not done:
+            key = input("Enter Move or Attack direction: ")
+
+            if key in self.move_range:
+                self.position.move(self.move_range[key])
                 if self.check_wall(_map):
-                    self.position = Position(now_pos)
-                    done = False
+                    self.position = deepcopy(now_pos)
                     continue
-                
-        except KeyError:
-            self.move_process(_map, _enemys)
-        
+                return
+
+            elif key in self.atk_range:
+                for _dir in self.atk_range[key]:
+                    for _enemy in _enemies:
+                        if _enemy.position ==  tuple([_rs - _p for _rs, _p in zip(_dir, self.position)]):
+                            _enemy.hp -= 1
+                return
+
         return
+
 class Enemy(Charactor):
     def __init__(self, _pos, _direction, _section, _type: str):
         super().__init__(
@@ -94,10 +92,10 @@ class Enemy(Charactor):
     
     def move_process(self, _map, _player, _Enemys):
 
-        now_pos = (self.position.x, self.position.y)
+        now_pos = deepcopy(self.position)
 
         if self.__mode :#プレイヤーを追いかけるモードの時
-            if ((self.position.x - _player.position.x) + (self.position.y - _player.position.y) == 1):
+            if (self.position.x - _player.position.x) + (self.position.y - _player.position.y) == 1:
                 _player.hp -= 1
             
             else:
@@ -108,11 +106,10 @@ class Enemy(Charactor):
                 ])
                 self.position.move(move)
                 if self.check_wall(_map) or self.check_enemy(_Enemys):
-                    self.position = Position(now_pos)
+                    self.position = now_pos
                     return
                 
         else:#プレイヤーを追いかけないとき
-            print(_player.section)
             if self.section == _player.section:
                 self.__mode = True
                 self.move_process(_map, _player, _Enemys)
@@ -120,7 +117,7 @@ class Enemy(Charactor):
             while True:
                 self.position.move((random.randint(-1, 1), random.randint(-1, 1)))
                 if self.check_wall(_map):
-                    self.position = Position(now_pos)
+                    self.position = now_pos
                 else:
                     break
             

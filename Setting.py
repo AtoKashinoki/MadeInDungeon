@@ -6,14 +6,14 @@ class Setting():
         hp: int = 3
         atk: int = 1
         move_range: dict[str, tuple[int, int]] = {
-            "N": (0, -1),
-            "NE": (1, -1),
-            "E": (1, 0),
-            "SE": (1, 1),
+            "W": (0, -1),
+            "WD": (1, -1),
+            "D": (1, 0),
+            "SD": (1, 1),
             "S": (0, 1),
-            "SW": (-1, 1),
-            "W": (-1, 0),
-            "NS": (-1, -1)
+            "SA": (-1, 1),
+            "A": (-1, 0),
+            "WA": (-1, -1)
 
         }
         atk_range: dict[str, tuple[int, int]] = {

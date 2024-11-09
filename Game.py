@@ -40,7 +40,7 @@ class GameLoop(ApplicationEngine):
         if Key.Ins in self.input: self.reboot()
         if Key.Del in self.input: raise Exit
 
-        self.player.move_process(self.d_map)
+        self.player.move_process(self.d_map, [])
         if self.d_map[self.player.position[0]][self.player.position[1]] == -2:
             raise Exit
 
@@ -64,7 +64,7 @@ class GameLoop(ApplicationEngine):
 
 
 def game_process():
-    player = Player((0, 0), 0, 0)
+    player = Player((5, 5), 0, 0)
     for i in range(3):
         hierarchy_process(player)
         if player.hp <= 0:

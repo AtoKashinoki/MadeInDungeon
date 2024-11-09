@@ -250,6 +250,8 @@ class ApplicationEngine(ABC):
         input_sys = self.__config.input_sys()
         self.__rendering_sys = self.__config.rendering_sys()
 
+        self.__rendering_sys.render(self.__rendering__)
+
         done = False
         while not done:
             # input update
