@@ -200,13 +200,14 @@ def generate_dungeon(width, height):
     for j in range(len(matching_coordinates_stair)):
         for i in range(len(matching_coordinates_stair[j])):
             if i != 0 and i != len(matching_coordinates_stair[i]) and j != 0 and j != len(matching_coordinates_stair):
-                inner_stair_room.append([j, i])
+                inner_stair_room.append(matching_coordinates_stair[j])
     stair_coordinates = inner_stair_room[random.randint(
         0, len(inner_stair_room)) - 1]
     dungeon[stair_coordinates[1]][stair_coordinates[0]] = -2
     print(f"##{room_number}")
     print(f"##{stair_room}")
-    print(f"##{inner_stair_room}")
+    print(f"matching_coordinates_stair{matching_coordinates_stair}")
+    print(f"inner_stair_room{inner_stair_room}")
 
     # ここで鍵の位置を決めてる
     key_room = random.randint(room_number, -7)
@@ -215,6 +216,8 @@ def generate_dungeon(width, height):
         for i in range(len(dungeon[j])):
             if dungeon[j][i] == key_room:
                 matching_coordinates_key_room.append([i, j])
+            elif dungeon[j][i] == -5:
+                pass
     key_coordinates = matching_coordinates_key_room[random.randint(
         0, len(matching_coordinates_key_room)) - 1]
     dungeon[key_coordinates[1]][key_coordinates[0]] = -4
@@ -235,7 +238,7 @@ def display_dungeon(dungeon):
             elif cell == -4:
                 display_row += "＄"
             elif cell == -5:
-                display_row += "｜"  # 柱S
+                display_row += "＠"  # 柱S
             elif cell == -6:
                 display_row += "　"  # 道:全角スペース
             else:
