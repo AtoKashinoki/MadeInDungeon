@@ -1,6 +1,5 @@
 import random
-from copy import deepcopy
-from Object import Enemy
+
 
 class Leaf:
     # MIN_LEAF_SIZE：リーフの分割を行う際の最小サイズを指定している。
@@ -123,10 +122,9 @@ class Leaf:
 
 
 def generate_dungeon(width, height):
-    
     root = Leaf(0, 0, width, height)
     leaves = [root]
-    _room_dic = dict()#[部屋番号]:{(x, y, w, h)}
+
     split_successful = True
     while split_successful:
         split_successful = False
@@ -158,15 +156,12 @@ def generate_dungeon(width, height):
     for leaf in leaves:
         if leaf.room:
             (x, y, w, h) = leaf.room
-            _room_dic[room_number] = (x, y, w, h)
-
             center_coordinates = []  # 外周を除いた真ん中の部分の座標を入れるリスト
             count_room_number = 0  # 部屋のマス数の合計
             for i in range(x, x + w):
                 for j in range(y, y + h):
                     dungeon[j][i] = room_number
                     count_room_number += 1
-                    
                     if i != x and i != (x + w) - 1 and j != y and j != (y + h) - 1:  # 外周を除く
                         center_coordinates.append([i, j])
             # print(f"外周を除いた真ん中の部分の座標{center_coordinates}部屋のマス数の合計{
@@ -194,29 +189,20 @@ def generate_dungeon(width, height):
                 for j in range(y, y + h):
                     dungeon[j][i] = -6  # 道-3
 
-    room_number += 1
-    print(room_number)
-    print(_room_dic)
     # ここで階段の生成
     stair_room = random.randint(room_number, -7)
     matching_coordinates_stair = []  # 階段のある部屋のマスすべての部屋の座標を取得
     inner_stair_room = []
-    print(_room_dic[stair_room])#(x, y, w, h)
-
-    for x in range((_room_dic[stair_room][0]), (_room_dic[stair_room][0]) + _room_dic[stair_room][2]):
-        for y in range((_room_dic[stair_room][1]), (_room_dic[stair_room][1]) + _room_dic[stair_room][3]):
-            print(dungeon[y][x], (y, x))
-            matching_coordinates_stair.append((x, y))
-
-    print("-----------")
-
-    for x in range(len(matching_coordinates_stair)):
-        for y in range(len(matching_coordinates_stair[x])):
-            if y != 0 and y != len(matching_coordinates_stair[x]) and x != 0 and x != len(matching_coordinates_stair):
-                inner_stair_room.append(matching_coordinates_stair[y])
-                print(dungeon[x][y], (x, y))
-                
-    stair_coordinates = inner_stair_room[random.randint(0, len(inner_stair_room)) - 1]
+    for j in range(len(dungeon)):
+        for i in range(len(dungeon[j])):
+            if dungeon[j][i] == stair_room:
+                matching_coordinates_stair.append([i, j])
+    for j in range(len(matching_coordinates_stair)):
+        for i in range(len(matching_coordinates_stair[j])):
+            if i != 0 and i != len(matching_coordinates_stair[i]) and j != 0 and j != len(matching_coordinates_stair):
+                inner_stair_room.append(matching_coordinates_stair[j])
+    stair_coordinates = inner_stair_room[random.randint(
+        0, len(inner_stair_room)) - 1]
     dungeon[stair_coordinates[1]][stair_coordinates[0]] = -2
     print(f"##{room_number}")
     print(f"##{stair_room}")
@@ -232,7 +218,6 @@ def generate_dungeon(width, height):
                 matching_coordinates_key_room.append([i, j])
             elif dungeon[j][i] == -5:
                 pass
-            
     key_coordinates = matching_coordinates_key_room[random.randint(0, len(matching_coordinates_key_room)) - 1]
     dungeon[key_coordinates[1]][key_coordinates[0]] = -4
 
