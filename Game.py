@@ -9,6 +9,7 @@ This file contain game class of MadeInDungeon.
 
 from copy import deepcopy
 from Object import Player
+from Object import Enemy
 import create_dungeon
 import Texture
 from Engine import ApplicationEngine, Exit
@@ -31,6 +32,10 @@ def print_map(d_map, player):
     _print_map = Texture.convert(deepcopy(d_map))
     _print_map[player.position[1]][player.position[0]] = "〇"
     texture = "{}" * len(d_map[0])
+    for i in range(len(d_map)):
+        print(d_map[i])
+
+    #print(d_map, "D")
     [print(texture.format(*_line)) for _line in _print_map]
     print(player.position)
     return
