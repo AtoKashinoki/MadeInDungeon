@@ -195,46 +195,68 @@ def generate_dungeon(width, height):
                     dungeon[j][i] = -6  # 道-3
 
     room_number += 1
-    print(room_number)
+    #print(room_number)
     print(_room_dic)
     # ここで階段の生成
-    stair_room = random.randint(room_number, -7)
-    matching_coordinates_stair = []  # 階段のある部屋のマスすべての部屋の座標を取得
-    inner_stair_room = []
-    print(_room_dic[stair_room])#(x, y, w, h)
-
-    for x in range((_room_dic[stair_room][0]), (_room_dic[stair_room][0]) + _room_dic[stair_room][2]):
-        for y in range((_room_dic[stair_room][1]), (_room_dic[stair_room][1]) + _room_dic[stair_room][3]):
-            print(dungeon[y][x], (y, x))
-            matching_coordinates_stair.append((x, y))
-
-    print("-----------")
-
-    for x in range(len(matching_coordinates_stair)):
-        for y in range(len(matching_coordinates_stair[x])):
-            if y != 0 and y != len(matching_coordinates_stair[x]) and x != 0 and x != len(matching_coordinates_stair):
-                inner_stair_room.append(matching_coordinates_stair[y])
-                print(dungeon[x][y], (x, y))
-                
-    stair_coordinates = inner_stair_room[random.randint(0, len(inner_stair_room)) - 1]
-    dungeon[stair_coordinates[1]][stair_coordinates[0]] = -2
-    print(f"##{room_number}")
-    print(f"##{stair_room}")
-    print(f"matching_coordinates_stair{matching_coordinates_stair}")
-    print(f"inner_stair_room{inner_stair_room}")
+    create_stair_done = False
+    while not create_stair_done:
+        stair_room = random.randint(room_number, -7)
+        matching_coordinates_stair = []  # 階段のある部屋のマスすべての部屋の座標を取得
+        #print(_room_dic[stair_room])#(x, y, w, h)
+        """すべてのマス受け取り
+        for x in range((_room_dic[stair_room][0] ), (_room_dic[stair_room][0]) + _room_dic[stair_room][2] ):
+            for y in range((_room_dic[stair_room][1] ), (_room_dic[stair_room][1]) + _room_dic[stair_room][3]):
+                print(dungeon[y][x], (x, y))
+                matching_coordinates_stair.append((x, y))
+            """
+        
+        """一回り小さい部屋受け取り"""
+        for x in range((_room_dic[stair_room][0] + 1), (_room_dic[stair_room][0]) + _room_dic[stair_room][2] - 1):
+            for y in range((_room_dic[stair_room][1] + 1), (_room_dic[stair_room][1]) + _room_dic[stair_room][3] -1):
+                if dungeon[y][x] == -5:
+                    pass
+                    #print(dungeon[y][x], (x, y))
+                else:
+                    #print(dungeon[y][x], (x, y))
+                    matching_coordinates_stair.append((x, y))
+        if matching_coordinates_stair == []:#3*3の部屋が選ばれるかつ真ん中にはしらがあると、空になるから、それを除外
+            continue
+        else:create_stair_done = True
+    
+    if len(matching_coordinates_stair) >= 2:
+        rand = random.randint(0, len(matching_coordinates_stair)-1)
+    else:
+        rand = 0
+    print(rand)
+    print(matching_coordinates_stair)
+    print(stair_room)
+    stair_pos = matching_coordinates_stair[rand]
+    #print("--------")
+    #print(stair_pos, stair_pos[0])
+    dungeon[stair_pos[1]][stair_pos[0]] = -2
 
     # ここで鍵の位置を決めてる
-    key_room = random.randint(room_number, -7)
+    key_room_done = False
+    while not key_room_done:#会談と違う部屋を選択するまで
+        _key_room = random.randint(room_number, -7)
+        if _key_room == stair_room:
+            continue
+        else:
+            key_room_done = True
+
+    print(_key_room)
+    print("----")
     matching_coordinates_key_room = []  # 鍵のある部屋のマスすべての部屋の座標を取得
-    for j in range(len(dungeon)):
-        for i in range(len(dungeon[j])):
-            if dungeon[j][i] == key_room:
-                matching_coordinates_key_room.append([i, j])
-            elif dungeon[j][i] == -5:
-                pass
-            
-    key_coordinates = matching_coordinates_key_room[random.randint(0, len(matching_coordinates_key_room)) - 1]
-    dungeon[key_coordinates[1]][key_coordinates[0]] = -4
+    for x in range((_room_dic[_key_room][0] ), (_room_dic[_key_room][0]) + _room_dic[_key_room][2] ):
+        for y in range((_room_dic[_key_room][1] ), (_room_dic[_key_room][1]) + _room_dic[_key_room][3]):
+            print(dungeon[y][x], (x, y))
+            if dungeon[y][x] != -5:
+                matching_coordinates_key_room.append((x, y))
+    print(matching_coordinates_key_room)
+    rand = random.randint(0, len(matching_coordinates_stair)-1)
+    key_pos = matching_coordinates_key_room[rand]
+    #key_coordinates = matching_coordinates_key_room[random.randint(0, len(matching_coordinates_key_room)) - 1]
+    dungeon[key_pos[1]][key_pos[0]] = -4
 
     return dungeon
 
