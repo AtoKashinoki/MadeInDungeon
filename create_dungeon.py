@@ -362,18 +362,18 @@ def display_dungeon(dungeon):
             if cell == -1:
                 display_row += "🔲"
             elif cell == -2:
-                display_row += "＃"  # 階段:全角スペース
+                display_row += "階"  # 階段:全角スペース
             elif cell == -4:
-                display_row += "＄"
+                display_row += "🔑"
             elif cell == -5:
-                display_row += "＠"  # 柱S
+                display_row += "🔲"  # 柱S
             elif cell == -6:
                 display_row += "　"  # 道:全角スペース
             elif cell == -99:
-                display_row += "！"
+                display_row += "👹"
 
             elif cell == -100:
-                display_row += "＊"
+                display_row += "😀"
 
             else:
                 display_row += "　"  # 他の数値はそのまま表示
@@ -384,7 +384,11 @@ def display_dungeon(dungeon):
 dungeon_width = 25
 dungeon_height = 20
 
-if __name__ == '__main__':
+def run():
     enemies = []
     dungeon = generate_dungeon(dungeon_width, dungeon_height, enemies)
-    display_dungeon(dungeon)
+    return dungeon
+
+
+if __name__ == '__main__':
+    display_dungeon(run())

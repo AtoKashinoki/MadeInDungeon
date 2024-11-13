@@ -9,7 +9,14 @@ This file is contain functions for developing systems.
 
 
 from abc import ABC
-from .Definition import ProtectMember
+import os
+from .Definition import ProtectMember, OS, Msvcrt
+
+
+""" Error  """
+
+
+class UnknownError(Exception): ...
 
 
 """ Functions skeleton """
@@ -17,6 +24,27 @@ from .Definition import ProtectMember
 
 class FunctionsSkeleton(ABC):
     """ Functions class base """
+    ...
+
+
+""" System """
+
+
+class System(FunctionsSkeleton):
+    """ System functions """
+
+    @staticmethod
+    def run_python(file: str) -> int:
+        """ Run python file """
+        run_com: str = ""
+
+        match os.name:
+            case OS.Unix: run_com = "python3 {}"
+            case OS.Windows: run_com = "python3 {}"
+            case _: raise UnknownError("This os unknown.")
+
+        return os.system(run_com.format(file))
+
     ...
 
 
