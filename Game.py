@@ -14,6 +14,7 @@ import Texture
 from Engine import ApplicationEngine, Exit
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
+from Object import Player, Enemy
 
 
 """ Game processes """
@@ -22,13 +23,14 @@ Key = Msvcrt.Key
 
 def hierarchy_process(player: Player):
     # ダンジョンを生成して変数に保管
-    d_map = create_dungeon.run()
-    player = game_loop(d_map, player)
+    d_map, player, enemies = create_dungeon.run(player)
+    enemies = [enemies[0], ]
+    player = game_loop(d_map, player, enemies)
     return  player
 
 
-def print_map(d_map, player):
-    create_dungeon.display_dungeon(d_map)
+def print_map(d_map, player, enemies):
+    create_dungeon.display_dungeon(d_map, player, enemies)
     # _print_map = Texture.convert(deepcopy(d_map))
     # _print_map[player.position[1]][player.position[0]] = "〇"
     # texture = "{}" * len(d_map[0])
@@ -37,22 +39,22 @@ def print_map(d_map, player):
     return
 
 
-def game_loop(d_map, player):
+def game_loop(d_map, player, enemies: list[Enemy]):
 
-    print_map(d_map, player)
+    print_map(d_map, player, enemies)
 
     done = False
     while not done:
-        player.move_process(d_map, [])
-        if d_map[player.position[0]][player.position[1]] == -2:
+        player.move_process(d_map, enemies)
+        if d_map[player.position.y][player.position.x] == -2:
             return player
 
-        # Enemy processes
+        [enemy.move_process(d_map, player, enemies) for enemy in enemies]
 
         if player.hp <= 0:
             return player
 
-        print_map(d_map, player)
+        print_map(d_map, player, enemies)
 
     return
 

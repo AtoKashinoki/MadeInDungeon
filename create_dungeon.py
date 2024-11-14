@@ -1,5 +1,7 @@
 import random
 from copy import deepcopy
+from selectors import SelectSelector
+from CodingTools.Types import Position
 from Object import Enemy
 from Object import Player
 class Leaf:
@@ -159,9 +161,9 @@ def generate_dungeon(width, height, _enemies):
     数値の意味
     -1    : 壁
     -2    : 階段
-    -3    : 宝
-    -4    : 鍵
-    -5    : 柱 
+    -3    : 柱 
+    -4    : 宝
+    -5    : 鍵
     -6    : 道
     -7~-n : 部屋番号
     """
@@ -194,14 +196,14 @@ def generate_dungeon(width, height, _enemies):
                         pillar_coordinates = center_coordinates.pop(random.randint(
                             0, len(center_coordinates)-1))
                         dungeon[pillar_coordinates[1]
-                                ][pillar_coordinates[0]] = -5
+                                ][pillar_coordinates[0]] = -3
                 else:
                     pillar_coordinates = center_coordinates.pop(random.randint(
                         0, len(center_coordinates)-1))
-                    dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = -5
+                    dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = 3
             elif len(center_coordinates) == 0:  # 3*3の場合
                 pillar_coordinates = center_coordinates[0][0]
-                dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = -5
+                dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = -3
             room_number += -1  # 部屋番号を入れる(-4~-n)
 
         for hall in leaf.halls:
@@ -221,7 +223,7 @@ def generate_dungeon(width, height, _enemies):
         """一回り小さい部屋受け取り"""
         for x in range((_room_dic[stair_room][0] + 1), (_room_dic[stair_room][0]) + _room_dic[stair_room][2] - 1):
             for y in range((_room_dic[stair_room][1] + 1), (_room_dic[stair_room][1]) + _room_dic[stair_room][3] -1):
-                if dungeon[y][x] == -5:
+                if dungeon[y][x] == -3:
                     pass
 
                 else:
@@ -253,12 +255,12 @@ def generate_dungeon(width, height, _enemies):
     for x in range((_room_dic[_key_room][0] ), (_room_dic[_key_room][0] + _room_dic[_key_room][2] )):
         for y in range((_room_dic[_key_room][1] ), (_room_dic[_key_room][1] + _room_dic[_key_room][3])):
             
-            if dungeon[y][x] != -5:
+            if dungeon[y][x] != -3:
                 matching_coordinates_key_room.append((x, y))
     
     rand = random.randint(0, len(matching_coordinates_stair)-1)
     key_pos = matching_coordinates_key_room[rand]
-    dungeon[key_pos[1]][key_pos[0]] = -4
+    dungeon[key_pos[1]][key_pos[0]] = -5
 
     """
     敵の生成/今気づいたけど関数分けれるやん
@@ -277,7 +279,7 @@ def generate_dungeon(width, height, _enemies):
         if now_room[2] * now_room[3] == 12 or now_room[2] * now_room[3] == 15:
             for x in range((now_room[0]), (now_room[0] + now_room[2])):
                 for y in range((now_room[1]), (now_room[1] + now_room[3])):
-                    if dungeon[y][x] != -2 or dungeon[y][x] != -4 or dungeon[y][x] != -5:
+                    if dungeon[y][x] != -2 or dungeon[y][x] != -5 or dungeon[y][x] != -3:
                         _room_space.append((x, y))
             enemy_pos = create_enemy(_room_number, _room_space, _enemies)
             if enemy_pos:
@@ -286,7 +288,7 @@ def generate_dungeon(width, height, _enemies):
         elif now_room[2] * now_room[3] == 16 or now_room[2] * now_room[3] == 20:
             for x in range((now_room[0]), (now_room[0] + now_room[2])):
                 for y in range((now_room[1]), (now_room[1] + now_room[3])):
-                    if dungeon[y][x] != -2 or dungeon[y][x] != -4 or dungeon[y][x] != -5:
+                    if dungeon[y][x] != -2 or dungeon[y][x] != -5 or dungeon[y][x] != -3:
                         _room_space.append((x, y))
             enemy_pos = create_enemy(_room_number, _room_space, _enemies)
             if enemy_pos:
@@ -299,7 +301,7 @@ def generate_dungeon(width, height, _enemies):
         elif now_room[2] * now_room[3] >= 25:
             for x in range((now_room[0]), (now_room[0] + now_room[2])):
                 for y in range((now_room[1]), (now_room[1] + now_room[3])):
-                    if dungeon[y][x] != -2 or dungeon[y][x] != -4 or dungeon[y][x] != -5:
+                    if dungeon[y][x] != -2 or dungeon[y][x] != -5 or dungeon[y][x] != -3:
                         _room_space.append((x, y))
             enemy_pos = create_enemy(_room_number, _room_space, _enemies)
             if enemy_pos:
@@ -325,7 +327,7 @@ def generate_dungeon(width, height, _enemies):
         for x in range((_room_dic[Player_room][0] ), (_room_dic[Player_room][0] + _room_dic[Player_room][2] )):
             for y in range((_room_dic[Player_room][1] ), (_room_dic[Player_room][1] + _room_dic[Player_room][3])):
                
-                if dungeon[y][x] != -5 and dungeon[y][x] != -2 and dungeon[y][x] != -99 :
+                if dungeon[y][x] != -3 and dungeon[y][x] != -2 and dungeon[y][x] != -99 :
                     player_room.append((x, y))
         if player_room == []:
             continue
@@ -348,47 +350,53 @@ def generate_dungeon(width, height, _enemies):
     Player(player_pos, 0, Player_room)
     dungeon[player_pos[1]][player_pos[0]] = -100
 
-        
-
     return dungeon
 
 
-def display_dungeon(dungeon):
-    for row in dungeon:
-        print(" ".join(f"{cell:2}" for cell in row))
-    for row in dungeon:
-        display_row = ""
-        for cell in row:
-            if cell == -1:
-                display_row += "🔲"
-            elif cell == -2:
-                display_row += "階"  # 階段:全角スペース
-            elif cell == -4:
-                display_row += "🔑"
-            elif cell == -5:
-                display_row += "🔲"  # 柱S
-            elif cell == -6:
-                display_row += "　"  # 道:全角スペース
-            elif cell == -99:
-                display_row += "👹"
+def display_dungeon(_dungeon, _player, _enemies):
+    _dungeon = \
+        [
+            [
+                "🔲" if cell in (-1, -3) else
+                "階" if cell == -2 else
+                "🔑" if cell == 5 else
+                "　"
+                for cell in row
+            ]
+            for row in _dungeon
+        ]
 
-            elif cell == -100:
-                display_row += "😀"
+    _dungeon[_player.position.y][_player.position.x] = "😀"
 
-            else:
-                display_row += "　"  # 他の数値はそのまま表示
-        print(display_row)
+    [
+        _dungeon[y].__setitem__(x, "👹")
+        for x, y in map(lambda x: x.position, _enemies)
+    ]
+
+    for row in _dungeon:
+        print("".join(row))
 
 
 # ダンジョンのサイズ
 dungeon_width = 25
 dungeon_height = 20
 
-def run():
-    enemies = []
-    dungeon = generate_dungeon(dungeon_width, dungeon_height, enemies)
-    return dungeon
+def run(_player):
+    _dungeon = generate_dungeon(dungeon_width, dungeon_height, [])
+    _enemies = []
+    for y in range(dungeon_height):
+        for x in range(dungeon_width):
+            if _dungeon[y][x] == -100:
+                _player.position = Position(x, y)
+            elif _dungeon[y][x] == -99:
+                _enemies.append(Enemy((x, y), 0, 0))
+    return _dungeon, _player, _enemies
 
 
 if __name__ == '__main__':
-    display_dungeon(run())
+    dungeon, player, enemies = run()
+    display_dungeon(
+        dungeon,
+        player,
+        enemies
+    )

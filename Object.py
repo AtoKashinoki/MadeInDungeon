@@ -30,13 +30,14 @@ class Charactor(Object):
     
 
     def check_wall(self, _map: list[list[int, ...], ...]):
-        return _map[self.position[1]][self.position[0]] == -1
+        return _map[self.position[1]][self.position[0]] in (-1, -2, -3)
     
     def check_enemy(self, _enemies):#enemysは敵のクラスのリスト
+        count = 0
         for idx in range(len(_enemies)):
             if self.position == _enemies[idx].position:
-                return 1
-        return 0
+                count += 1
+        return count
 
 class Player(Charactor):
     def __init__(self, _pos, _direction, _section):
@@ -51,6 +52,7 @@ class Player(Charactor):
         )
 
     def move_process(self, _map, _enemies):
+        self.section = _map[self.position[1]][self.position[0]]
         now_pos = deepcopy(self.position)
 
         done = False
@@ -59,7 +61,7 @@ class Player(Charactor):
 
             if key in self.move_range:
                 self.position.move(self.move_range[key])
-                if self.check_wall(_map):
+                if self.check_wall(_map) or self.check_enemy(_enemies) > 0:
                     self.position = deepcopy(now_pos)
                     continue
                 return
@@ -90,32 +92,37 @@ class Enemy(Charactor):
         self.move_count = 0
         return
     
-    def move_process(self, _map, _player, _Enemys):
+    def move_process(self, _map, _player, _enemies):
 
+        self.section = _map[self.position[1]][self.position[0]]
         now_pos = deepcopy(self.position)
 
         if self.__mode :#プレイヤーを追いかけるモードの時
-            if (self.position.x - _player.position.x) + (self.position.y - _player.position.y) == 1:
+            if abs(self.position.x - _player.position.x) + abs(self.position.y - _player.position.y) == 1:
+                print("atk")
                 _player.hp -= 1
             
             else:
+                print("move")
                 result_search = self.breadth_first_search(_map, _player)#返り血は、タプル（次のマスからゴールまでのマス、[0]が次のマス）
                 move = tuple([
                     _rs - _p
-                    for _rs, _p in zip(result_search[-2], self.position)
+                    for _rs, _p in zip(result_search, self.position)
                 ])
+                print(self.position, result_search, move)
                 self.position.move(move)
-                if self.check_wall(_map) or self.check_enemy(_Enemys):
+                if self.check_wall(_map) or self.check_enemy(_enemies) > 1:
                     self.position = now_pos
+                    print("stack")
                     return
                 
         else:#プレイヤーを追いかけないとき
-            if self.section == _player.section:
+            if not self.section == -6 and self.section == _player.section:
                 self.__mode = True
-                self.move_process(_map, _player, _Enemys)
 
             while True:
-                self.position.move((random.randint(-1, 1), random.randint(-1, 1)))
+                key = tuple(self.move_range.keys())[random.randrange(len(self.move_range))]
+                self.position.move(self.move_range[key])
                 if self.check_wall(_map):
                     self.position = now_pos
                 else:
@@ -144,34 +151,62 @@ class Enemy(Charactor):
         
     def breadth_first_search(self, _map, goal: Player):
         direction = ((0, 1), (0, -1), (1, 0), (-1, 0))
-        _map[self.position.y][self.position.x] = 1
-        _map = self.search_direction(_map, [self.position, ], 2, goal.position)
-        result_route = []
-        now_pos = goal.position
-        #print(_map)
-        now_number = _map[0][goal.position.y][goal.position.x]
-        #print(self.position, "AA")
-        #print(_map)
-        while True:
-            route = []
+        _search_map = deepcopy(_map)
 
-            for dir in direction:
-                _to_pos = deepcopy(now_pos).move(dir)
-                if _map[0][_to_pos.y][_to_pos.x] == now_number -1:
-                    route.append(_to_pos)
+        # 幅優先探査　距離計算
+        _search_map[goal.position.y][goal.position.x] = 1
+        counter = 0
+        done = False
+        while not done:
+            counter += 1
 
-            #print(result_route)
-            if self.position in result_route:
-                #print("V")
+            search_poses = [
+                (x, y)
+                for y in range(len(_search_map))
+                for x in range(len(_search_map[y]))
+                if _search_map[y][x] == counter
+            ]
+
+            if len(search_poses) == 0:
                 break
-            if len(route) == 2:
-                result_route.append(route[0]) if random.randint(0, 1) > 0.5 else result_route.append(route[1])
-            else:
-                result_route.append(route[0])
 
-            now_number -= 1
-            now_pos = result_route[-1]
-        return result_route
+            to_poses = [
+                (x+dx, y+dy)
+                for x, y in search_poses
+                for dx, dy in direction
+                if _search_map[y+dy][x+dx] < -3
+            ]
+
+            next_c = counter+1
+            [
+                _search_map[y].__setitem__(x, next_c)
+                for x, y in to_poses
+            ]
+
+            ...
+
+        # 幅優先探査　ルート計算
+        counter = _search_map[self.position.y][self.position.x]
+        route = [(self.position.x, self.position.y)]
+
+        done = False
+        while not done:
+            counter -= 1
+
+            x, y = route[-1]
+            next_r = [
+                (x+dx, y+dy)
+                for dx, dy in direction
+                if _search_map[y+dy][x+dx] == counter
+            ]
+
+            if len(next_r) == 0 or counter <= 0:
+                break
+
+            route.append(next_r[random.randrange(len(next_r))])
+            ...
+
+        return route[1]
             
     
 if __name__ == '__main__':
