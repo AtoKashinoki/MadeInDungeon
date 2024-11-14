@@ -50,6 +50,8 @@ class Player(Charactor):
             _direction,
             _section
         )
+        self.item_key = False
+        return
 
     def move_process(self, _map, _enemies):
         self.section = _map[self.position[1]][self.position[0]]
@@ -61,16 +63,25 @@ class Player(Charactor):
 
             if key in self.move_range:
                 self.position.move(self.move_range[key])
+                if _map[self.position[1]][self.position[0]] == -2 and self.item_key:
+                    return
                 if self.check_wall(_map) or self.check_enemy(_enemies) > 0:
                     self.position = deepcopy(now_pos)
                     continue
+                if _map[self.position[1]][self.position[0]] == -5:
+                    print("Get key!")
+                    self.item_key = True
+                    _map[self.position[1]][self.position[0]] = -6
+                    ...
                 return
 
             elif key in self.atk_range:
+                print("Player attack")
                 for _dir in self.atk_range[key]:
                     for _enemy in _enemies:
-                        if _enemy.position ==  tuple([_rs - _p for _rs, _p in zip(_dir, self.position)]):
+                        if _enemy.position ==  tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
                             _enemy.hp -= 1
+                            print("Hit !!")
                 return
 
         return
@@ -99,11 +110,10 @@ class Enemy(Charactor):
 
         if self.__mode :#プレイヤーを追いかけるモードの時
             if abs(self.position.x - _player.position.x) + abs(self.position.y - _player.position.y) == 1:
-                print("atk")
+                print("Enemy attack!!")
                 _player.hp -= 1
             
             else:
-                print("move")
                 result_search = self.breadth_first_search(_map, _player)#返り血は、タプル（次のマスからゴールまでのマス、[0]が次のマス）
                 move = tuple([
                     _rs - _p
@@ -113,7 +123,6 @@ class Enemy(Charactor):
                 self.position.move(move)
                 if self.check_wall(_map) or self.check_enemy(_enemies) > 1:
                     self.position = now_pos
-                    print("stack")
                     return
                 
         else:#プレイヤーを追いかけないとき
@@ -205,6 +214,9 @@ class Enemy(Charactor):
 
             route.append(next_r[random.randrange(len(next_r))])
             ...
+
+        if len(route) == 1:
+            return route[0]
 
         return route[1]
             

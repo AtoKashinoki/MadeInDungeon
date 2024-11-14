@@ -359,7 +359,7 @@ def display_dungeon(_dungeon, _player, _enemies):
             [
                 "🔲" if cell in (-1, -3) else
                 "階" if cell == -2 else
-                "🔑" if cell == 5 else
+                "🔑" if cell == -5 else
                 "　"
                 for cell in row
             ]
@@ -388,6 +388,7 @@ def run(_player):
         for x in range(dungeon_width):
             if _dungeon[y][x] == -100:
                 _player.position = Position(x, y)
+                _player.item_key = False
             elif _dungeon[y][x] == -99:
                 _enemies.append(Enemy((x, y), 0, 0))
     return _dungeon, _player, _enemies

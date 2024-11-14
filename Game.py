@@ -46,6 +46,13 @@ def game_loop(d_map, player, enemies: list[Enemy]):
     done = False
     while not done:
         player.move_process(d_map, enemies)
+
+        enemies = [
+            enemy
+            for enemy in enemies
+            if enemy.hp > 0
+        ]
+
         if d_map[player.position.y][player.position.x] == -2:
             return player
 
@@ -55,6 +62,7 @@ def game_loop(d_map, player, enemies: list[Enemy]):
             return player
 
         print_map(d_map, player, enemies)
+        print(f"{player.position=}")
 
     return
 
