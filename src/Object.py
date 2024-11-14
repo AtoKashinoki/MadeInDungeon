@@ -1,7 +1,6 @@
 from CodingTools.Types import Position
-from Setting import Setting
+from src.Setting import Setting
 from copy import deepcopy
-from time import sleep
 import random
 
 class Object:

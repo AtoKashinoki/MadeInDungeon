@@ -1,5 +1,6 @@
 import random
-
+from CodingTools.Types import Position
+from src.Object import Enemy, Player
 
 class Leaf:
     # MIN_LEAF_SIZE：リーフの分割を行う際の最小サイズを指定している。
@@ -121,10 +122,28 @@ class Leaf:
                 (min(point1[0], point2[0]), point2[1], abs(point2[0] - point1[0]) + 1, 1))
 
 
-def generate_dungeon(width, height):
+def create_enemy(_room_number, _room_space:list[tuple], _enemies):
+    if _room_space == []:
+        return
+    
+    elif len(_room_space) == 1:
+        _pos = _room_space[0]
+        _enemies.append(Enemy(_pos, 0, _room_number))
+        _room_space.pop()
+
+    else:
+        dice = random.randint(0, len(_room_space)-1)
+        _pos = _room_space[dice]
+        _enemies.append(Enemy(_pos, 0, _room_number))
+        _room_space.pop(dice)
+
+    return _pos
+
+def generate_dungeon(width, height, _enemies):
+    _enemies = []
     root = Leaf(0, 0, width, height)
     leaves = [root]
-
+    _room_dic = dict()#[部屋番号]:{(x, y, w, h)}
     split_successful = True
     while split_successful:
         split_successful = False
@@ -140,9 +159,9 @@ def generate_dungeon(width, height):
     数値の意味
     -1    : 壁
     -2    : 階段
-    -3    : 宝
-    -4    : 鍵
-    -5    : 柱 
+    -3    : 柱 
+    -4    : 宝
+    -5    : 鍵
     -6    : 道
     -7~-n : 部屋番号
     """
@@ -156,16 +175,18 @@ def generate_dungeon(width, height):
     for leaf in leaves:
         if leaf.room:
             (x, y, w, h) = leaf.room
+            _room_dic[room_number] = (x, y, w, h)
+
             center_coordinates = []  # 外周を除いた真ん中の部分の座標を入れるリスト
             count_room_number = 0  # 部屋のマス数の合計
             for i in range(x, x + w):
                 for j in range(y, y + h):
                     dungeon[j][i] = room_number
                     count_room_number += 1
+                    
                     if i != x and i != (x + w) - 1 and j != y and j != (y + h) - 1:  # 外周を除く
                         center_coordinates.append([i, j])
-            # print(f"外周を除いた真ん中の部分の座標{center_coordinates}部屋のマス数の合計{
-            #       count_room_number}")
+
             if len(center_coordinates) != 0:  # 3*3以外の場合
                 if count_room_number >= 20:
                     # 部屋の合計マス数が25以上であれば柱を2個生成する
@@ -173,14 +194,14 @@ def generate_dungeon(width, height):
                         pillar_coordinates = center_coordinates.pop(random.randint(
                             0, len(center_coordinates)-1))
                         dungeon[pillar_coordinates[1]
-                                ][pillar_coordinates[0]] = -5
+                                ][pillar_coordinates[0]] = -3
                 else:
                     pillar_coordinates = center_coordinates.pop(random.randint(
                         0, len(center_coordinates)-1))
-                    dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = -5
+                    dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = 3
             elif len(center_coordinates) == 0:  # 3*3の場合
                 pillar_coordinates = center_coordinates[0][0]
-                dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = -5
+                dungeon[pillar_coordinates[1]][pillar_coordinates[0]] = -3
             room_number += -1  # 部屋番号を入れる(-4~-n)
 
         for hall in leaf.halls:
@@ -189,66 +210,193 @@ def generate_dungeon(width, height):
                 for j in range(y, y + h):
                     dungeon[j][i] = -6  # 道-3
 
+    room_number += 1
+    
     # ここで階段の生成
-    stair_room = random.randint(room_number, -7)
-    matching_coordinates_stair = []  # 階段のある部屋のマスすべての部屋の座標を取得
-    inner_stair_room = []
-    for j in range(len(dungeon)):
-        for i in range(len(dungeon[j])):
-            if dungeon[j][i] == stair_room:
-                matching_coordinates_stair.append([i, j])
-    for j in range(len(matching_coordinates_stair)):
-        for i in range(len(matching_coordinates_stair[j])):
-            if i != 0 and i != len(matching_coordinates_stair[i]) and j != 0 and j != len(matching_coordinates_stair):
-                inner_stair_room.append(matching_coordinates_stair[j])
-    stair_coordinates = inner_stair_room[random.randint(
-        0, len(inner_stair_room)) - 1]
-    dungeon[stair_coordinates[1]][stair_coordinates[0]] = -2
-    print(f"##{room_number}")
-    print(f"##{stair_room}")
-    print(f"matching_coordinates_stair{matching_coordinates_stair}")
-    print(f"inner_stair_room{inner_stair_room}")
+    create_stair_done = False
+    while not create_stair_done:
+        stair_room = random.randint(room_number, -7)
+        matching_coordinates_stair = []  # 階段のある部屋のマスすべての部屋の座標を取得
+
+        """一回り小さい部屋受け取り"""
+        for x in range((_room_dic[stair_room][0] + 1), (_room_dic[stair_room][0]) + _room_dic[stair_room][2] - 1):
+            for y in range((_room_dic[stair_room][1] + 1), (_room_dic[stair_room][1]) + _room_dic[stair_room][3] -1):
+                if dungeon[y][x] == -3:
+                    pass
+
+                else:
+
+                    matching_coordinates_stair.append((x, y))
+        if matching_coordinates_stair == []:#3*3の部屋が選ばれるかつ真ん中にはしらがあると、空になるから、それを除外
+            continue
+        else:create_stair_done = True
+    
+    if len(matching_coordinates_stair) >= 2:
+        rand = random.randint(0, len(matching_coordinates_stair)-1)
+    else:
+        rand = 0
+ 
+    stair_pos = matching_coordinates_stair[rand]
+
+    dungeon[stair_pos[1]][stair_pos[0]] = -2
 
     # ここで鍵の位置を決めてる
-    key_room = random.randint(room_number, -7)
+    key_room_done = False
+    while not key_room_done:#会談と違う部屋を選択するまで
+        _key_room = random.randint(room_number, -7)
+        if _key_room == stair_room:
+            continue
+        else:
+            key_room_done = True
+
     matching_coordinates_key_room = []  # 鍵のある部屋のマスすべての部屋の座標を取得
-    for j in range(len(dungeon)):
-        for i in range(len(dungeon[j])):
-            if dungeon[j][i] == key_room:
-                matching_coordinates_key_room.append([i, j])
-            elif dungeon[j][i] == -5:
-                pass
-    key_coordinates = matching_coordinates_key_room[random.randint(0, len(matching_coordinates_key_room)) - 1]
-    dungeon[key_coordinates[1]][key_coordinates[0]] = -4
+    for x in range((_room_dic[_key_room][0] ), (_room_dic[_key_room][0] + _room_dic[_key_room][2] )):
+        for y in range((_room_dic[_key_room][1] ), (_room_dic[_key_room][1] + _room_dic[_key_room][3])):
+            
+            if dungeon[y][x] != -3:
+                matching_coordinates_key_room.append((x, y))
+    
+    rand = random.randint(0, len(matching_coordinates_stair)-1)
+    key_pos = matching_coordinates_key_room[rand]
+    dungeon[key_pos[1]][key_pos[0]] = -5
+
+    """
+    敵の生成/今気づいたけど関数分けれるやん
+    for 文で部屋番号を取り出す。
+    if文で、部屋の広さに応じて敵の人数を調整する
+    部屋の中で柱、会談、鍵以外のマスを_room_spaceに格納。
+    create_enemy関数に渡す。
+    """
+    room_numbers = _room_dic.keys()
+
+    for _room_number in room_numbers:#
+
+        _room_space = []
+        now_room = _room_dic[_room_number]
+        
+        if now_room[2] * now_room[3] == 12 or now_room[2] * now_room[3] == 15:
+            for x in range((now_room[0]), (now_room[0] + now_room[2])):
+                for y in range((now_room[1]), (now_room[1] + now_room[3])):
+                    if dungeon[y][x] != -2 or dungeon[y][x] != -5 or dungeon[y][x] != -3:
+                        _room_space.append((x, y))
+            enemy_pos = create_enemy(_room_number, _room_space, _enemies)
+            if enemy_pos:
+                dungeon[enemy_pos[1]][enemy_pos[0]] = -99
+        
+        elif now_room[2] * now_room[3] == 16 or now_room[2] * now_room[3] == 20:
+            for x in range((now_room[0]), (now_room[0] + now_room[2])):
+                for y in range((now_room[1]), (now_room[1] + now_room[3])):
+                    if dungeon[y][x] != -2 or dungeon[y][x] != -5 or dungeon[y][x] != -3:
+                        _room_space.append((x, y))
+            enemy_pos = create_enemy(_room_number, _room_space, _enemies)
+            if enemy_pos:
+                dungeon[enemy_pos[1]][enemy_pos[0]] = -99
+            if random.random() > 0.5:
+                enemy_pos = create_enemy(_room_number, _room_space, _enemies)
+                if enemy_pos:
+                    dungeon[enemy_pos[1]][enemy_pos[0]] = -99
+        
+        elif now_room[2] * now_room[3] >= 25:
+            for x in range((now_room[0]), (now_room[0] + now_room[2])):
+                for y in range((now_room[1]), (now_room[1] + now_room[3])):
+                    if dungeon[y][x] != -2 or dungeon[y][x] != -5 or dungeon[y][x] != -3:
+                        _room_space.append((x, y))
+            enemy_pos = create_enemy(_room_number, _room_space, _enemies)
+            if enemy_pos:
+                dungeon[enemy_pos[1]][enemy_pos[0]] = -99
+            enemy_pos = create_enemy(_room_number, _room_space, _enemies)
+            if enemy_pos:
+                dungeon[enemy_pos[1]][enemy_pos[0]] = -99
+        else:pass
+
+    """プレイヤーをせいせいする"""
+    player_done = False
+    while not player_done:
+        player_room_done = False
+        while not player_room_done:#会談と違う部屋を選択するまで
+            Player_room = random.randint(room_number, -7)
+            if Player_room == _key_room:
+                continue
+            else:
+                player_room_done = True
+
+    
+        player_room = []  # 鍵のある部屋のマスすべての部屋の座標を取得
+        for x in range((_room_dic[Player_room][0] ), (_room_dic[Player_room][0] + _room_dic[Player_room][2] )):
+            for y in range((_room_dic[Player_room][1] ), (_room_dic[Player_room][1] + _room_dic[Player_room][3])):
+               
+                if dungeon[y][x] != -3 and dungeon[y][x] != -2 and dungeon[y][x] != -99 :
+                    player_room.append((x, y))
+        if player_room == []:
+            continue
+        elif len(player_room) == 1:
+            dice = False
+            player_done = True
+
+        else:
+            dice = True
+            player_done = True
+        
+    if dice:
+        rand = random.randint(0, len(player_room)-1)
+
+    else:
+        rand = 0
+
+    player_pos = player_room[rand]
+    #key_coordinates = matching_coordinates_key_room[random.randint(0, len(matching_coordinates_key_room)) - 1]
+    Player(player_pos, 0, Player_room)
+    dungeon[player_pos[1]][player_pos[0]] = -100
 
     return dungeon
 
 
-def display_dungeon(dungeon):
-    for row in dungeon:
-        print(" ".join(f"{cell:2}" for cell in row))
-    for row in dungeon:
-        display_row = ""
-        for cell in row:
-            if cell == -1:
-                display_row += "🔲"
-            elif cell == -2:
-                display_row += "＃"  # 階段:全角スペース
-            elif cell == -4:
-                display_row += "＄"
-            elif cell == -5:
-                display_row += "＠"  # 柱S
-            elif cell == -6:
-                display_row += "　"  # 道:全角スペース
-            else:
-                display_row += "　"  # 他の数値はそのまま表示
-        print(display_row)
+def display_dungeon(_dungeon, _player, _enemies):
+    _dungeon = \
+        [
+            [
+                "🔲" if cell in (-1, -3) else
+                "階" if cell == -2 else
+                "🔑" if cell == -5 else
+                "　"
+                for cell in row
+            ]
+            for row in _dungeon
+        ]
+
+    _dungeon[_player.position.y][_player.position.x] = "😀"
+
+    [
+        _dungeon[y].__setitem__(x, "👹")
+        for x, y in map(lambda x: x.position, _enemies)
+        if not _player.visibility_map[y][x] == -101
+    ]
+
+    for row in _dungeon:
+        print("".join(row))
 
 
 # ダンジョンのサイズ
 dungeon_width = 25
 dungeon_height = 20
 
+def run(_player):
+    _dungeon = generate_dungeon(dungeon_width, dungeon_height, [])
+    _enemies = []
+    for y in range(dungeon_height):
+        for x in range(dungeon_width):
+            if _dungeon[y][x] == -100:
+                _player.position = Position(x, y)
+                _player.item_key = False
+            elif _dungeon[y][x] == -99:
+                _enemies.append(Enemy((x, y), 0, 0))
+    return _dungeon, _player, _enemies
+
+
 if __name__ == '__main__':
-    dungeon = generate_dungeon(dungeon_width, dungeon_height)
-    display_dungeon(dungeon)
+    dungeon, player, enemies = run()
+    display_dungeon(
+        dungeon,
+        player,
+        enemies
+    )

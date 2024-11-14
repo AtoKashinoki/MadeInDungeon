@@ -8,22 +8,21 @@ This file contain game class of MadeInDungeon.
 
 
 from copy import deepcopy
-from Object import Player
-import create_dungeon
-import Texture
-from Engine import ApplicationEngine, Exit
+from src import create_dungeon
+from src import Texture
+from src.Engine import ApplicationEngine, Exit
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
-from Object import Player, Enemy
+from src.Object import Player, Enemy
 
 
 """ Game processes """
 
 
 start_text = (
-    "\n\n"
+    "\n\n\n"
     "~~MadeInDungeon~~\n"
-    "\n"
+    "\n\n"
     "セカイに突然現れたダンジョン「アビス」\n"
     "「アビス」には不思議な力を持つ遺物が眠っているとされ\n"
     "多くの探索家がこのダンジョンに潜っていった\n"
@@ -31,16 +30,16 @@ start_text = (
     "その最果てからの帰還者はいまだにいない\n"
     "\n"
     "あなたは「アビス」に挑戦する新たな探索家として立ち上がる...\n"
-    "\n"
+    "\n\n\n"
     "[Enter] 次へ"
 )
 
 rule = (
-    "\n\n"
+    "\n\n\n"
     "移動 -> wasdキー（小文字入力）\n"
     "   移動は斜めも可 （「wa」など）\n"
     "攻撃 -> WASDキー（大文字入力）\n"
-    "\n"
+    "\n\n\n"
     "[Enter] 「アビス」に潜る"
 )
 

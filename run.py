@@ -11,7 +11,7 @@ This file contain running MadeInDungeon.
 from os import getcwd
 import sys
 from time import sleep
-from Game import game_process
+from src.Game import game_process
 
 
 """ values """
