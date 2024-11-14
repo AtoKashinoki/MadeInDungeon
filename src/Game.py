@@ -85,22 +85,40 @@ game_clear = (
 
 
 auto_text = (
-    "\n\n\n"
-    "次に目を開けたとき\n"
-    "目に映ったのは　どこまでも続く大穴「アビス」だった\n"
-    "\n\n\n",
-    "\n\n\n"
-    "A never ending MadeInDungeon\n"
-    "\n\n\n",
-    "Project MadeInDungeon\n"
-    "泉龍真\n"
-    "小松学翔\n"
-    "齊藤旭宏\n"
-    "柏木空翔\n"
-    "\n\n\n",
-    "\n\n\n"
-    "Thank you for playing!!"
-    "\n\n\n"
+    "",
+    "",
+    "",
+    "",
+    "",
+    "次に目を開けたとき\n",
+    "目に映ったのは　どこまでも続く大穴「アビス」だった\n",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "A never ending MadeInDungeon\n",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Project MadeInDungeon\n",
+    "泉龍真\n",
+    "小松学翔\n",
+    "齊藤旭宏\n",
+    "柏木空翔\n",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Thank you for playing!!",
+    "",
+    "",
+    "",
+    "",
+    "",
 )
 
 def hierarchy_process(player: Player, clear: bool = False):
@@ -248,8 +266,9 @@ def game_process():
             print(text)
             input()
         for text in auto_text:
+            sleep(0.8)
             print(text)
-            sleep(5)
+        sleep(5)
     return
 
 
