@@ -9,7 +9,7 @@ This file contain MadeInDungeon test process.
 
 
 import sys
-from Engine import ApplicationEngine, Exit
+from src.Engine import ApplicationEngine, Exit
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
 

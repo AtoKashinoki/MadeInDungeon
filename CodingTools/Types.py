@@ -60,7 +60,7 @@ class Position(object):
     def __len__(self) -> int:
         return len(self.__data)
 
-    def move(self, movement: tuple[int, ...]) -> None:
+    def move(self, movement: tuple[int, ...]):
         """ Move position to next position """
         self.__data = [
             _pos + _diff for _pos, _diff in zip(self.__data, movement)

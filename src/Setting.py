@@ -16,7 +16,7 @@ class Setting():
             "sa": (-1, 1),
             "as": (-1, 1),
             "a": (-1, 0),
-            "ea": (-1, -1),
+            "wa": (-1, -1),
             "aw": (-1, -1),
 
         }
@@ -26,6 +26,11 @@ class Setting():
             "S": ((-1, 1), (0, 1), (1, 1)),
             "A": ((-1, -1), (-1, 0), (-1, 1)),
         }
+        visibility: tuple[tuple] = tuple(
+            (x, y)
+            for y in range(-3, 4)
+            for x in range(-3+abs(y), 4-abs(y))
+        )
 
     class Enemy(DataClass):
         hp: int = 2
