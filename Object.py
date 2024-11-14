@@ -17,6 +17,7 @@ class Charactor(Object):
     atk_range: dict[str, [int, int]]
     direction: int
     section: int
+    __visibility_map: list[list[int]] | None
 
     def __init__(self, _pos, _hp, _atk, _move_range, _atk_range, _direction, _section):
         super().__init__(_pos)
@@ -26,6 +27,34 @@ class Charactor(Object):
         self.atk_range = _atk_range
         self.direction = _direction
         self.section = _section
+        self.visibility = Setting.Player.visibility
+        self.__visibility_map = None
+        return
+
+    @property
+    def visibility_map(self): return self.__visibility_map
+
+    def reset_visibility(self, d_map):
+        self.__visibility_map = \
+            [
+                [
+                    -101
+                    for _ in range(len(d_map[y]))
+                ]
+                for y in range(len(d_map))
+            ]
+        return
+
+    def update_visibility(self, d_map):
+        [
+            self.__visibility_map[self.position.y+y].__setitem__(
+                self.position.x+x,
+                d_map[self.position.y+y][self.position.x+x]
+            )
+            for x, y in self.visibility
+            if 0 <= self.position.x+x < len(d_map[y])
+            if 0 <= self.position.y+y < len(d_map)
+        ]
         return
     
 
@@ -81,7 +110,7 @@ class Player(Charactor):
                     for _enemy in _enemies:
                         if _enemy.position ==  tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
                             _enemy.hp -= 1
-                            print("Hit !!")
+                            print("Hit!!")
                 return
 
         return
@@ -119,7 +148,7 @@ class Enemy(Charactor):
                     _rs - _p
                     for _rs, _p in zip(result_search, self.position)
                 ])
-                print(self.position, result_search, move)
+
                 self.position.move(move)
                 if self.check_wall(_map) or self.check_enemy(_enemies) > 1:
                     self.position = now_pos
@@ -128,14 +157,14 @@ class Enemy(Charactor):
         else:#プレイヤーを追いかけないとき
             if not self.section == -6 and self.section == _player.section:
                 self.__mode = True
+                return
 
-            while True:
-                key = tuple(self.move_range.keys())[random.randrange(len(self.move_range))]
-                self.position.move(self.move_range[key])
-                if self.check_wall(_map):
-                    self.position = now_pos
-                else:
-                    break
+            key = tuple(self.move_range.keys())[random.randrange(len(self.move_range))]
+            self.position.move(self.move_range[key])
+            if self.check_wall(_map) or self.position == _player.position:
+                self.position = now_pos
+            else:
+                ...
             
     def search_direction(self, _map, poses:list , distance, goal):
         direction = ((0, 1), (0, -1), (1, 0), (-1, 0))

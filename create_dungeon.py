@@ -371,6 +371,7 @@ def display_dungeon(_dungeon, _player, _enemies):
     [
         _dungeon[y].__setitem__(x, "👹")
         for x, y in map(lambda x: x.position, _enemies)
+        if not _player.visibility_map[y][x] == -101
     ]
 
     for row in _dungeon:

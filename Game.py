@@ -20,17 +20,48 @@ from Object import Player, Enemy
 """ Game processes """
 
 
+start_text = (
+    "\n\n"
+    "~~MadeInDungeon~~\n"
+    "\n"
+    "セカイに突然現れたダンジョン「アビス」\n"
+    "「アビス」には不思議な力を持つ遺物が眠っているとされ\n"
+    "多くの探索家がこのダンジョンに潜っていった\n"
+    "しかし\n"
+    "その最果てからの帰還者はいまだにいない\n"
+    "\n"
+    "あなたは「アビス」に挑戦する新たな探索家として立ち上がる...\n"
+    "\n"
+    "[Enter] 次へ"
+)
+
+rule = (
+    "\n\n"
+    "移動 -> wasdキー（小文字入力）\n"
+    "   移動は斜めも可 （「wa」など）\n"
+    "攻撃 -> WASDキー（大文字入力）\n"
+    "\n"
+    "[Enter] 「アビス」に潜る"
+)
 
 def hierarchy_process(player: Player):
     # ダンジョンを生成して変数に保管
     d_map, player, enemies = create_dungeon.run(player)
-    enemies = [enemies[0], ]
+
+    if not 2 == sum([
+        d_map[y][x] in (-2, -5)
+        for y in range(len(d_map))
+        for x in range(len(d_map[y]))
+    ]):
+        hierarchy_process(player)
+        return player
+
     player = game_loop(d_map, player, enemies)
     return  player
 
 
-def print_map(d_map, player, enemies):
-    create_dungeon.display_dungeon(d_map, player, enemies)
+def print_map(_map, player, enemies):
+    create_dungeon.display_dungeon(_map, player, enemies)
     # _print_map = Texture.convert(deepcopy(d_map))
     # _print_map[player.position[1]][player.position[0]] = "〇"
     # texture = "{}" * len(d_map[0])
@@ -39,9 +70,11 @@ def print_map(d_map, player, enemies):
     return
 
 
-def game_loop(d_map, player, enemies: list[Enemy]):
+def game_loop(d_map, player: Player, enemies: list[Enemy]):
+    player.reset_visibility(d_map)
+    player.update_visibility(d_map)
 
-    print_map(d_map, player, enemies)
+    print_map(player.visibility_map, player, enemies)
 
     done = False
     while not done:
@@ -61,8 +94,10 @@ def game_loop(d_map, player, enemies: list[Enemy]):
         if player.hp <= 0:
             return player
 
-        print_map(d_map, player, enemies)
+        player.update_visibility(d_map)
+        print_map(player.visibility_map, player, enemies)
         print(f"{player.position=}")
+        print(f"{player.hp=}")
 
     return
 
@@ -103,6 +138,10 @@ class GameLoop(ApplicationEngine):
 
 
 def game_process():
+    print(start_text, end="")
+    input()
+    print(rule, end="")
+    input()
     player = Player((5, 5), 0, 0)
     for i in range(3):
         hierarchy_process(player)
