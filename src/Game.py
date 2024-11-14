@@ -14,12 +14,13 @@ from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
 from src.Object import Player, Enemy
 from time import sleep
+from src.GameLoopEngine import GameLoop
 
 
 """ Game processes """
 
 
-human_play_mode: bool = False
+human_play_mode: bool = True
 
 
 start_text = (
@@ -140,7 +141,7 @@ def hierarchy_process(player: Player, clear: bool = False):
         enemies = []
 
     if human_play_mode:
-        game_loop_ = "GameLoop(d_map, player)"
+        game_loop_ = GameLoop(d_map, player, enemies)
         game_loop_.exe()
         return game_loop_.player
 

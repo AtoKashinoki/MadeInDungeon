@@ -128,6 +128,42 @@ class Player(Charactor):
 
         return
 
+    def game_loop_mp(self, _map, _enemies, input_key):
+        self.section = _map[self.position[1]][self.position[0]]
+        now_pos = deepcopy(self.position)
+
+        key = input_key
+
+        if key in self.move_range:
+            self.position.move(self.move_range[key])
+            if _map[self.position[1]][self.position[0]] == -2 and self.item_key:
+                return ()
+            if _map[self.position[1]][self.position[0]] == -4:
+                self.item_diamond = True
+                return ()
+            if self.check_wall(_map) or self.check_enemy(_enemies) > 0:
+                self.position = deepcopy(now_pos)
+                return ()
+            if _map[self.position[1]][self.position[0]] == -5:
+                self.f_get_key = True
+                self.item_key = True
+                _map[self.position[1]][self.position[0]] = -6
+                ...
+            return ()
+
+        elif key in self.atk_range:
+            self.f_attack = True
+            attacking = []
+            for _dir in self.atk_range[key]:
+                for _enemy in _enemies:
+                    if _enemy.position ==  tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
+                        _enemy.hp -= 1
+                        self.f_attack_hit = True
+                        attacking.append(_enemy.position)
+            return attacking
+
+        return ()
+
 class Enemy(Charactor):
     def __init__(self, _pos, _direction, _section, _type: str=None):
         super().__init__(

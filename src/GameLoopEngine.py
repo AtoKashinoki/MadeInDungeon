@@ -2,23 +2,27 @@
 
 from copy import deepcopy
 from time import sleep
-
+from src.Object import Player, Enemy
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
-from Engine import ApplicationEngine, Exit
-import Texture
+from src.Engine import ApplicationEngine, Exit
+from src import Texture
 
 
 
 class GameLoop(ApplicationEngine):
 
-    def __init__(self, d_map, player):
+    def __init__(self, d_map, player: Player, enemies: list[Enemy]):
         super().__init__()
         self.d_map = d_map
         self.player = player
+        self.enemies = enemies
         self.game_over = False
         self.attacking = list()
         self.attack_f = False
+
+        player.reset_visibility(d_map)
+        player.update_visibility(d_map)
         return
 
     def __update__(self):
@@ -46,9 +50,15 @@ class GameLoop(ApplicationEngine):
             ...
 
         if input_keys in (*self.player.move_range, *self.player.atk_range):
-            self.attacking.append([self.player.game_loop_mp(self.d_map, [], input_keys), 1])
+            self.attacking.append([self.player.game_loop_mp(self.d_map, self.enemies, input_keys), 1])
             self.render_update_flag = True
             ...
+
+        self.enemies = [
+            enemy
+            for enemy in self.enemies
+            if enemy.hp > 0
+        ]
 
         if self.d_map[self.player.position[1]][self.player.position[0]] == -2:
             raise Exit
@@ -64,7 +74,12 @@ class GameLoop(ApplicationEngine):
         player = self.player
         print_map = Texture.convert(deepcopy(self.d_map))
         pp = player.position
-        print_map[pp.y][pp.x] = "〇"
+        print_map[pp.y][pp.x] = "😀"
+        [
+            print_map[y].__setitem__(x, "👹")
+            for x, y in map(lambda x: x.position, self.enemies)
+            if not player.visibility_map[y][x] == -101
+        ]
         self.attack_f = False
         for attacking in self.attacking:
             for _dir in attacking[0]:
