@@ -16,7 +16,6 @@ class Charactor(Object):
     atk_range: dict[str, [int, int]]
     direction: int
     section: int
-    __visibility_map: list[list[int]] | None
 
     def __init__(self, _pos, _hp, _atk, _move_range, _atk_range, _direction, _section):
         super().__init__(_pos)
@@ -26,8 +25,40 @@ class Charactor(Object):
         self.atk_range = _atk_range
         self.direction = _direction
         self.section = _section
+        return
+    
+
+    def check_wall(self, _map: list[list[int, ...], ...]):
+        return _map[self.position[1]][self.position[0]] in (-1, -2, -3)
+    
+    def check_enemy(self, _enemies):#enemysは敵のクラスのリスト
+        count = 0
+        for idx in range(len(_enemies)):
+            if self.position == _enemies[idx].position:
+                count += 1
+        return count
+
+class Player(Charactor):
+    __visibility_map: list[list[int]] | None
+
+    def __init__(self, _pos, _direction, _section):
+        super().__init__(
+            _pos,#tuple 
+            Setting.Player.hp,
+            Setting.Player.atk,
+            Setting.Player.move_range,
+            Setting.Player.atk_range,
+            _direction,
+            _section
+        )
         self.visibility = Setting.Player.visibility
         self.__visibility_map = None
+        self.item_key = False
+        self.f_attack = False
+        self.f_attack_hit = False
+        self.f_get_key = False
+        self.f_clear = False
+        self.item_diamond = False
         return
 
     @property
@@ -45,40 +76,20 @@ class Charactor(Object):
         return
 
     def update_visibility(self, d_map):
-        [
-            self.__visibility_map[self.position.y+y].__setitem__(
-                self.position.x+x,
-                d_map[self.position.y+y][self.position.x+x]
-            )
-            for x, y in self.visibility
-            if 0 <= self.position.x+x < len(d_map[y])
-            if 0 <= self.position.y+y < len(d_map)
-        ]
-        return
-    
-
-    def check_wall(self, _map: list[list[int, ...], ...]):
-        return _map[self.position[1]][self.position[0]] in (-1, -2, -3)
-    
-    def check_enemy(self, _enemies):#enemysは敵のクラスのリスト
-        count = 0
-        for idx in range(len(_enemies)):
-            if self.position == _enemies[idx].position:
-                count += 1
-        return count
-
-class Player(Charactor):
-    def __init__(self, _pos, _direction, _section):
-        super().__init__(
-            _pos,#tuple 
-            Setting.Player.hp,
-            Setting.Player.atk,
-            Setting.Player.move_range,
-            Setting.Player.atk_range,
-            _direction,
-            _section
-        )
-        self.item_key = False
+        if not self.f_clear:
+            [
+                self.__visibility_map[self.position.y+y].__setitem__(
+                    self.position.x+x,
+                    d_map[self.position.y+y][self.position.x+x]
+                )
+                for x, y in self.visibility
+                if 0 <= self.position.x+x < len(d_map[y])
+                if 0 <= self.position.y+y < len(d_map)
+            ]
+            ...
+        else:
+            self.__visibility_map = d_map
+            ...
         return
 
     def move_process(self, _map, _enemies):
@@ -93,23 +104,26 @@ class Player(Charactor):
                 self.position.move(self.move_range[key])
                 if _map[self.position[1]][self.position[0]] == -2 and self.item_key:
                     return
+                if _map[self.position[1]][self.position[0]] == -4:
+                    self.item_diamond = True
+                    return
                 if self.check_wall(_map) or self.check_enemy(_enemies) > 0:
                     self.position = deepcopy(now_pos)
                     continue
                 if _map[self.position[1]][self.position[0]] == -5:
-                    print("Get key!")
+                    self.f_get_key = True
                     self.item_key = True
                     _map[self.position[1]][self.position[0]] = -6
                     ...
                 return
 
             elif key in self.atk_range:
-                print("Player attack")
+                self.f_attack = True
                 for _dir in self.atk_range[key]:
                     for _enemy in _enemies:
                         if _enemy.position ==  tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
                             _enemy.hp -= 1
-                            print("Hit!!")
+                            self.f_attack_hit = True
                 return
 
         return
@@ -129,6 +143,8 @@ class Enemy(Charactor):
         self.type = _type
         self.__mode = False
         self.move_count = 0
+        self.f_attack = False
+        self.f_clear = False
         return
     
     def move_process(self, _map, _player, _enemies):
@@ -138,7 +154,7 @@ class Enemy(Charactor):
 
         if self.__mode :#プレイヤーを追いかけるモードの時
             if abs(self.position.x - _player.position.x) + abs(self.position.y - _player.position.y) == 1:
-                print("Enemy attack!!")
+                self.f_attack = True
                 _player.hp -= 1
             
             else:

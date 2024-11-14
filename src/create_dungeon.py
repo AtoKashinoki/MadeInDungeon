@@ -358,6 +358,7 @@ def display_dungeon(_dungeon, _player, _enemies):
                 "🔲" if cell in (-1, -3) else
                 "階" if cell == -2 else
                 "🔑" if cell == -5 else
+                "💎" if cell == -4 else
                 "　"
                 for cell in row
             ]
@@ -377,20 +378,35 @@ def display_dungeon(_dungeon, _player, _enemies):
 
 
 # ダンジョンのサイズ
-dungeon_width = 25
-dungeon_height = 20
+width = 25
+height = 20
 
 def run(_player):
-    _dungeon = generate_dungeon(dungeon_width, dungeon_height, [])
+    _dungeon = generate_dungeon(width, height, [])
     _enemies = []
-    for y in range(dungeon_height):
-        for x in range(dungeon_width):
+    for y in range(height):
+        for x in range(width):
             if _dungeon[y][x] == -100:
                 _player.position = Position(x, y)
                 _player.item_key = False
             elif _dungeon[y][x] == -99:
                 _enemies.append(Enemy((x, y), 0, 0))
     return _dungeon, _player, _enemies
+
+
+def clear_loom(_player: Player):
+    map_ = \
+        [
+            [
+                -6 if 0 < x < width-1 and 0 < y < height - 1 else
+                -1
+                for x in range(width)
+            ]
+            for y in range(height)
+        ]
+    map_[5][width//2] = -4
+    _player.position = Position(width//2, -3)
+    return map_, _player
 
 
 if __name__ == '__main__':

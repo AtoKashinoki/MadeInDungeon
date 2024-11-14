@@ -3,6 +3,7 @@
 
 This file contain game class of MadeInDungeon.
 """
+from src.create_dungeon import clear_loom
 
 """ imports """
 
@@ -14,6 +15,7 @@ from src.Engine import ApplicationEngine, Exit
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
 from src.Object import Player, Enemy
+from time import sleep
 
 
 """ Game processes """
@@ -43,17 +45,80 @@ rule = (
     "[Enter] 「アビス」に潜る"
 )
 
-def hierarchy_process(player: Player):
-    # ダンジョンを生成して変数に保管
-    d_map, player, enemies = create_dungeon.run(player)
+game_over = (
+    "\n\n\n"
+    "あなたは「アビス」遺物になった...\n"
+    "\n\n\n"
+    "[R+Enter] 新たな探索者を雇う\n"
+    "[Enter] 終了\n"
+)
 
-    if not 2 == sum([
-        d_map[y][x] in (-2, -5)
-        for y in range(len(d_map))
-        for x in range(len(d_map[y]))
-    ]):
-        hierarchy_process(player)
-        return player
+game_clear = (
+    "\n\n\n"
+    "あなたは「アビス」の最果てにたどり着いた\n"
+    "そこは今までの階層とは違い\n"
+    "広く　そして　輝く結晶体が部屋全体を照らしている\n"
+    "\n\n\n"
+    "[Enter] 次へ",
+    "\n\n\n"
+    "ここまで長いこと暗闇で戦い続けていたため\n"
+    "この部屋の静けさで安堵を覚える...\n"
+    "\n\n"
+    "しかし\n"
+    "あなたは異様な点に気づく\n"
+    "\n\n\n"
+    "[Enter] 次へ",
+    "\n\n\n"
+    "何人もの人が潜ってきたダンジョンだが\n"
+    "遺体一つなかった\n"
+    "\n"
+    "あったのはガラクタのような遺物ばかり\n"
+    "\n"
+    "これ以上「アビス」に進む道はない\n"
+    "\n\n\n"
+    "[Enter] 次へ",
+    "\n\n\n"
+    "疲れがあるあなたは目をつむる...\n"
+    "\n\n\n"
+    "[Enter] 次へ",
+)
+
+
+auto_text = (
+    "\n\n\n"
+    "次に目を開けたとき\n"
+    "目に映ったのは　どこまでも続く大穴「アビス」だった\n"
+    "\n\n\n",
+    "\n\n\n"
+    "A never ending MadeInDungeon\n"
+    "\n\n\n",
+    "Project MadeInDungeon\n"
+    "泉龍真\n"
+    "小松学翔\n"
+    "齊藤旭宏\n"
+    "柏木空翔\n"
+    "\n\n\n",
+    "\n\n\n"
+    "Thank you for playing!!"
+    "\n\n\n"
+)
+
+def hierarchy_process(player: Player, clear: bool = False):
+    if not clear:
+        # ダンジョンを生成して変数に保管
+        d_map, player, enemies = create_dungeon.run(player)
+
+        if not 2 == sum([
+            d_map[y][x] in (-2, -5)
+            for y in range(len(d_map))
+            for x in range(len(d_map[y]))
+        ]):
+            hierarchy_process(player)
+            return player
+    else:
+        d_map, player = create_dungeon.clear_loom(player)
+        player.f_clear = True
+        enemies = []
 
     player = game_loop(d_map, player, enemies)
     return  player
@@ -77,6 +142,8 @@ def game_loop(d_map, player: Player, enemies: list[Enemy]):
 
     done = False
     while not done:
+
+        """ player update """
         player.move_process(d_map, enemies)
 
         enemies = [
@@ -85,18 +152,43 @@ def game_loop(d_map, player: Player, enemies: list[Enemy]):
             if enemy.hp > 0
         ]
 
-        if d_map[player.position.y][player.position.x] == -2:
+        if d_map[player.position.y][player.position.x] in (-2, -4):
             return player
+
+        """ enemy update """
 
         [enemy.move_process(d_map, player, enemies) for enemy in enemies]
 
         if player.hp <= 0:
             return player
 
+        """ render """
         player.update_visibility(d_map)
+
+        print()
+        print("Dungeon map")
         print_map(player.visibility_map, player, enemies)
         print(f"{player.position=}")
         print(f"{player.hp=}")
+        print()
+        if player.f_get_key:
+            print("Get key!")
+            player.f_get_key = False
+            ...
+        if player.f_attack:
+            print("Player attack!")
+            player.f_attack = False
+            if player.f_attack_hit:
+                print("Hit!!")
+                player.f_attack_hit = False
+                ...
+            ...
+        for enemy in enemies:
+            if enemy.f_attack:
+                print("Enemy attack!!")
+                enemy.f_attack = False
+                ...
+            ...
 
     return
 
@@ -145,13 +237,19 @@ def game_process():
     for i in range(3):
         hierarchy_process(player)
         if player.hp <= 0:
-            print("Game Over")
+            print(game_over)
+            if input() in ("R", "r"): game_process()
             break 
         else:
-            print(f"{i + 1}F Clear")
+            print(f"\n\n\n{i + 1}F Clear\n\n\nNext floor...\n\n")
     else:
-        pass
-
+        hierarchy_process(player, True)
+        for text in game_clear:
+            print(text)
+            input()
+        for text in auto_text:
+            print(text)
+            sleep(5)
     return
 
 
