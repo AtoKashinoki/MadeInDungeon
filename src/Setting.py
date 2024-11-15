@@ -3,7 +3,7 @@ from CodingTools.Inheritance import DataClass
 
 class Setting():
     class Player(DataClass):
-        hp: int = 3
+        hp: int = 5
         atk: int = 1
         move_range: dict[str, tuple[int, int]] = {
             "w": (0, -1),
