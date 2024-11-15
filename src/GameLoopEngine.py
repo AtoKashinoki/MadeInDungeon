@@ -75,10 +75,10 @@ class GameLoop(ApplicationEngine):
                 if enemy.hp > 0
             ]
 
-            if self.d_map[self.player.position[1]][self.player.position[0]] == -2:
+            if self.d_map[self.player.position[1]][self.player.position[0]] in (-2, -4):
                 raise Exit
 
-            if len(self.attacking) > 0:
+            if not len(self.attacking) > 0:
                 self.update_enemies()
 
             if self.player.hp <= 0:
