@@ -19,7 +19,7 @@ from src.GameLoopEngine import GameLoop
 """ Game processes """
 
 
-human_play_mode: bool = False #
+human_play_mode: bool = True #
 
 
 start_text = (
