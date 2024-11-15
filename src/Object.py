@@ -59,6 +59,7 @@ class Player(Charactor):
         self.f_get_key = False
         self.f_clear = False
         self.item_diamond = False
+        self.move = False
         return
 
     @property
@@ -149,6 +150,7 @@ class Player(Charactor):
                 self.item_key = True
                 _map[self.position[1]][self.position[0]] = -6
                 ...
+            self.move = True
             return ()
 
         elif key in self.atk_range:
@@ -159,7 +161,8 @@ class Player(Charactor):
                     if _enemy.position ==  tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
                         _enemy.hp -= 1
                         self.f_attack_hit = True
-                        attacking.append(_enemy.position)
+                attacking.append(_dir)
+            self.move = True
             return attacking
 
         return ()
