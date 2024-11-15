@@ -42,7 +42,7 @@ rule2 = (
 )
 
 
-def help():
+def help_():
     print(rule, end="")
     input()
     print(rule2, end="")
@@ -95,7 +95,7 @@ class GameLoop(ApplicationEngine):
             ])
 
             if input_keys == "h":
-                help()
+                help_()
                 self.render_update_flag = True
                 ...
 
