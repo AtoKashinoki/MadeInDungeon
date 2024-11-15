@@ -118,8 +118,7 @@ class GameLoop(ApplicationEngine):
         self.print(f"{player.hp=}")
         self.print()
         if player.f_get_key:
-            self.print("Get key!")
-            player.f_get_key = False
+            self.print("Have key!")
             ...
         if player.f_attack:
             self.print("Player attack!")

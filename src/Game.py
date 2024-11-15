@@ -161,6 +161,8 @@ def hierarchy_process(player: Player, clear: bool = False):
         player.f_clear = True
         enemies = []
 
+    player.f_get_key = False
+    
     if human_play_mode:
         game_loop_ = GameLoop(d_map, player, enemies)
         game_loop_.exe()
