@@ -60,6 +60,7 @@ class GameLoop(ApplicationEngine):
         self.game_over = False
         self.attacking = list()
         self.attack_f = False
+        self.not_move = False
 
         player.reset_visibility(d_map)
         player.update_visibility(d_map)
@@ -110,8 +111,11 @@ class GameLoop(ApplicationEngine):
                 ...
 
             if input_keys in (*self.player.move_range, *self.player.atk_range):
+                self.not_move = False
                 self.attacking.append([self.player.game_loop_mp(self.d_map, self.enemies, input_keys), 1])
                 self.render_update_flag = True
+                if not self.player.move:
+                    self.not_move = True
                 ...
 
             self.enemies = [
@@ -178,6 +182,9 @@ class GameLoop(ApplicationEngine):
                 self.print("Enemy attack!!")
                 enemy.f_attack = False
                 ...
+            ...
+        if self.not_move:
+            self.print("行動できませんでした。別の行動を入力してください")
             ...
         self.print("「h」キーでルールを再表示")
         return
