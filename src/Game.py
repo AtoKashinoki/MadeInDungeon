@@ -19,7 +19,7 @@ from src.GameLoopEngine import GameLoop
 """ Game processes """
 
 
-human_play_mode: bool = True
+human_play_mode: bool = False #
 
 
 start_text = (
@@ -222,8 +222,8 @@ def game_loop(d_map, player: Player, enemies: list[Enemy]):
         print(f"{player.hp=}")
         print()
         if player.f_get_key:
-            print("Get key!")
-            player.f_get_key = False
+            print("Have a key!")
+            
             ...
         if player.f_attack:
             print("Player attack!")
