@@ -222,7 +222,7 @@ def game_loop(d_map, player: Player, enemies: list[Enemy]):
         print(f"{player.hp=}")
         print()
         if player.f_get_key:
-            print("Have a key!")
+            print("Have a key🔑")
             
             ...
         if player.f_attack:
