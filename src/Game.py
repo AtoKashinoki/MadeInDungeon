@@ -4,7 +4,6 @@
 This file contain game class of MadeInDungeon.
 """
 
-
 """ imports """
 
 
@@ -127,6 +126,7 @@ auto_text = (
     "",
 )
 
+
 def hierarchy_process(player: Player, clear: bool = False):
     if not clear:
         # ダンジョンを生成して変数に保管
@@ -150,7 +150,7 @@ def hierarchy_process(player: Player, clear: bool = False):
         return game_loop_.player
 
     player = game_loop(d_map, player, enemies)
-    return  player
+    return player
 
 
 def print_map(_map, player, enemies):
@@ -221,7 +221,6 @@ def game_loop(d_map, player: Player, enemies: list[Enemy]):
 
     return
 
-
 def game_process():
     print(start_text, end="")
     input()
@@ -232,9 +231,11 @@ def game_process():
         hierarchy_process(player)
         if player.hp <= 0:
             print(game_over)
-            if input() in ("R", "r"): game_process()
-            break 
+            if input() in ("R", "r"):
+                game_process()
+            break
         else:
+            player.recovery_hp(1)
             print(f"\n\n\n{i + 1}F Clear\n\n\nNext floor...\n\n")
     else:
         hierarchy_process(player, True)

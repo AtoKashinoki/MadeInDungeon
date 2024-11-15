@@ -10,7 +10,7 @@ class Object:
         self.position = Position(*_pos)
 
 class Charactor(Object):
-    hp: int 
+    hp: int
     atk: int
     move_range: dict[str, tuple[int, int]]
     atk_range: dict[str, [int, int]]
@@ -30,8 +30,8 @@ class Charactor(Object):
 
     def check_wall(self, _map: list[list[int, ...], ...]):
         return _map[self.position[1]][self.position[0]] in (-1, -2, -3)
-    
-    def check_enemy(self, _enemies):#enemysは敵のクラスのリスト
+
+    def check_enemy(self, _enemies):  # enemysは敵のクラスのリスト
         count = 0
         for idx in range(len(_enemies)):
             if self.position == _enemies[idx].position:
@@ -43,7 +43,7 @@ class Player(Charactor):
 
     def __init__(self, _pos, _direction, _section):
         super().__init__(
-            _pos,#tuple 
+            _pos,  # tuple
             Setting.Player.hp,
             Setting.Player.atk,
             Setting.Player.move_range,
@@ -122,7 +122,7 @@ class Player(Charactor):
                 self.f_attack = True
                 for _dir in self.atk_range[key]:
                     for _enemy in _enemies:
-                        if _enemy.position ==  tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
+                        if _enemy.position == tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
                             _enemy.hp -= 1
                             self.f_attack_hit = True
                 return
@@ -166,6 +166,11 @@ class Player(Charactor):
             return attacking
 
         return ()
+
+    def recovery_hp(self, _hp_rec):
+        self.hp += _hp_rec
+        return
+
 
 class Enemy(Charactor):
     def __init__(self, _pos, _direction, _section, _type: str=None):
