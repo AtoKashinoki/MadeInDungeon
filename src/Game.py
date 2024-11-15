@@ -55,6 +55,7 @@ rule2 = (
     "\n\n\n"
     "攻撃力は一律１ダメージ\n"
     "敵はHPが２\n"
+    "敵はプレイヤーが行動を起こすと一回行動する\n"
     "敵は隣りにいると攻撃する\n"
     "\n"
     "🔲が壁\n"
@@ -162,7 +163,7 @@ def hierarchy_process(player: Player, clear: bool = False):
         enemies = []
 
     player.f_get_key = False
-    
+
     if human_play_mode:
         game_loop_ = GameLoop(d_map, player, enemies)
         game_loop_.exe()
