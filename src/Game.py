@@ -242,6 +242,15 @@ def game_loop(d_map, player: Player, enemies: list[Enemy]):
 
     return
 
+def help():
+    print(start_text, end="")
+    input()
+    print(rule, end="")
+    input()
+    print(rule2, end="")
+    input()
+    return
+
 def game_process():
     print(start_text, end="")
     input()

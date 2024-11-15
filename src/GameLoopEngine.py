@@ -9,6 +9,46 @@ from src.Engine import ApplicationEngine, Exit
 from src import Texture
 
 
+rule = (
+    "\n\n\n"
+    "移動 -> wasdキー（小文字入力）\n"
+    "   移動は斜めも可 （「wa」など）\n"
+    "攻撃 -> WASDキー（大文字入力）\n"
+    "   例　入力：D\n"
+    "　　　　　 ##\n"
+    " 　　　　😀##\n"
+    "　　　　　 ##\n"
+    "　　※　## の範囲に１ダメージ\n"
+    "\n\n\n"
+    "[Enter] 次へ"
+)
+
+rule2 = (
+    "\n\n\n"
+    "攻撃力は一律１ダメージ\n"
+    "敵はHPが２\n"
+    "敵はプレイヤーが行動を起こすと一回行動する\n"
+    "敵は隣りにいると攻撃する\n"
+    "\n"
+    "「🔲」が壁\n"
+    "「階」が階段\n"
+    "階層をクリアするとHP1回復"
+    "\n"
+    "🔑をとり、階段へ向かおう！\n"
+    "\n"
+    "注意：仕組みの都合上、画面更新時にチカチカとしてしまいます\n"
+    "\n\n\n"
+    "[Enter] 「アビス」に潜る"
+)
+
+
+def help():
+    print(rule, end="")
+    input()
+    print(rule2, end="")
+    input()
+    return
+
 
 class GameLoop(ApplicationEngine):
 
@@ -54,6 +94,11 @@ class GameLoop(ApplicationEngine):
                 for _id in self.input
                 if _id in Msvcrt.alphabet_dict
             ])
+
+            if input_keys == "h":
+                help()
+                self.render_update_flag = True
+                ...
 
             for i in range(len(self.attacking)):
                 self.attacking[i][1] -= 1
@@ -134,6 +179,7 @@ class GameLoop(ApplicationEngine):
                 enemy.f_attack = False
                 ...
             ...
+        self.print("「h」キーでルールを再表示")
         return
 
     ...
