@@ -3,19 +3,19 @@
 
 This file contain game class of MadeInDungeon.
 """
+from time import sleep
+from src.Object import Player, Enemy
+from CodingTools.Definition import Msvcrt
+from src.Engine import ApplicationEngine, Exit
+from src import Texture
+from src import create_dungeon
+from copy import deepcopy
 from src.create_dungeon import clear_loom
 
 """ imports """
 
 
-from copy import deepcopy
-from src import create_dungeon
-from src import Texture
-from src.Engine import ApplicationEngine, Exit
-from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
-from src.Object import Player, Enemy
-from time import sleep
 
 
 """ Game processes """
@@ -121,6 +121,7 @@ auto_text = (
     "",
 )
 
+
 def hierarchy_process(player: Player, clear: bool = False):
     if not clear:
         # ダンジョンを生成して変数に保管
@@ -139,7 +140,7 @@ def hierarchy_process(player: Player, clear: bool = False):
         enemies = []
 
     player = game_loop(d_map, player, enemies)
-    return  player
+    return player
 
 
 def print_map(_map, player, enemies):
@@ -220,8 +221,10 @@ class GameLoop(ApplicationEngine):
         return
 
     def __update__(self):
-        if Key.Ins in self.input: self.reboot()
-        if Key.Del in self.input: raise Exit
+        if Key.Ins in self.input:
+            self.reboot()
+        if Key.Del in self.input:
+            raise Exit
 
         self.player.move_process(self.d_map, [])
         if self.d_map[self.player.position[0]][self.player.position[1]] == -2:
@@ -256,9 +259,11 @@ def game_process():
         hierarchy_process(player)
         if player.hp <= 0:
             print(game_over)
-            if input() in ("R", "r"): game_process()
-            break 
+            if input() in ("R", "r"):
+                game_process()
+            break
         else:
+            player.recovery_hp(1)
             print(f"\n\n\n{i + 1}F Clear\n\n\nNext floor...\n\n")
     else:
         hierarchy_process(player, True)
