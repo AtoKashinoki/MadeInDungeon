@@ -48,7 +48,7 @@ rule = (
     "　　　　　 ##\n"
     "　　※　## の範囲に１ダメージ\n"
     "\n\n\n"
-    "[Enter] 「アビス」に潜る"
+    "[Enter] 次へ"
 )
 
 rule2 = (
@@ -59,6 +59,7 @@ rule2 = (
     "\n"
     "🔑をとり、階段へ向かおう！\n"
     "\n\n\n"
+    "[Enter] 「アビス」に潜る"
 )
 
 game_over = (
@@ -238,7 +239,7 @@ def game_process():
     print(rule, end="")
     input()
     print(rule2, end="")
-    print()
+    input()
     player = Player((5, 5), 0, 0)
     for i in range(3):
         hierarchy_process(player)
