@@ -50,3 +50,6 @@ class Setting():
             "W": (-1, 0),
         }
         options: dict[str, int | float]
+    
+    class Map(DataClass):
+        stage_num = 3

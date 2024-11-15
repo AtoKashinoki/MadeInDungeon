@@ -14,6 +14,7 @@ Key = Msvcrt.Key
 from src.Object import Player, Enemy
 from time import sleep
 from src.GameLoopEngine import GameLoop
+from src.Setting import Setting
 
 
 """ Game processes """
@@ -259,7 +260,7 @@ def game_process():
     print(rule2, end="")
     input()
     player = Player((5, 5), 0, 0)
-    for i in range(3):
+    for i in range(Setting.Map.stage_num):
         hierarchy_process(player)
         if player.hp <= 0:
             print(game_over)
