@@ -68,10 +68,8 @@ class GameLoop(ApplicationEngine):
 
     def update_enemies(self):
         if self.player.move:
-            [
+            for enemy in self.enemies:
                 enemy.move_process(self.d_map, self.player, self.enemies)
-                for enemy in self.enemies
-            ]
             self.player.move = False
             ...
         return
