@@ -1,5 +1,7 @@
 
 
+from src import Texture
+from src.Engine import ApplicationEngine, Exit
 from copy import deepcopy
 from time import sleep
 from src.Object import Player, Enemy
@@ -90,8 +92,10 @@ class GameLoop(ApplicationEngine):
         else:
 
             if 224 in self.input:
-                if Key.Ins in self.input: self.reboot()
-                if Key.Del in self.input: raise Exit
+                if Key.Ins in self.input:
+                    self.reboot()
+                if Key.Del in self.input:
+                    raise Exit
 
             input_keys = "".join([
                 Msvcrt.alphabet_dict[_id]
@@ -108,14 +112,16 @@ class GameLoop(ApplicationEngine):
                 self.attacking[i][1] -= 1
                 ...
             pre_cou = len(self.attacking)
-            self.attacking = [attacking for attacking in self.attacking if attacking[1] > 0]
+            self.attacking = [
+                attacking for attacking in self.attacking if attacking[1] > 0]
             if not pre_cou == len(self.attacking):
                 self.render_update_flag = True
                 ...
 
             if input_keys in (*self.player.move_range, *self.player.atk_range) or ai_mode:
                 self.not_move = False
-                self.attacking.append([self.player.game_loop_mp(self.d_map, self.enemies, input_keys), 1])
+                self.attacking.append([self.player.game_loop_mp(
+                    self.d_map, self.enemies, input_keys), 1])
                 self.render_update_flag = True
                 if not self.player.move:
                     self.not_move = True
@@ -147,8 +153,13 @@ class GameLoop(ApplicationEngine):
         pp = player.position
         print_map[pp.y][pp.x] = "😀"
         [
+            print_map[y].__setitem__(x, "👾")
+            if enemy.type == "2move" else
             print_map[y].__setitem__(x, "👹")
-            for x, y in map(lambda x: x.position, self.enemies)
+            for (x, y), enemy in zip(
+                map(lambda x: x.position, self.enemies),
+                self.enemies
+            )
             if not player.visibility_map[y][x] == -101
         ]
         self.attack_f = False
@@ -166,7 +177,9 @@ class GameLoop(ApplicationEngine):
         self.print("Dungeon map")
         [self.print(texture.format(*_line)) for _line in print_map]
         self.print(f"{player.position=}")
-        self.print(f"{player.hp=}")
+        # self.print(f"{player.hp=}")
+        life = "❤" * player.hp
+        self.print(f"Player Hp{life}")
         self.print()
         if player.f_get_key:
             self.print("Have key🔑")

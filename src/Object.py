@@ -3,11 +3,13 @@ from src.Setting import Setting
 from copy import deepcopy
 import random
 
+
 class Object:
     position: Position
 
     def __init__(self, _pos: tuple):
         self.position = Position(*_pos)
+
 
 class Charactor(Object):
     hp: int
@@ -26,7 +28,6 @@ class Charactor(Object):
         self.direction = _direction
         self.section = _section
         return
-    
 
     def check_wall(self, _map: list[list[int, ...], ...]):
         return _map[self.position[1]][self.position[0]] in (-1, -2, -3)
@@ -37,6 +38,7 @@ class Charactor(Object):
             if self.position == _enemies[idx].position:
                 count += 1
         return count
+
 
 class Player(Charactor):
     __visibility_map: list[list[int]] | None
@@ -160,7 +162,7 @@ class Player(Charactor):
             attacking = []
             for _dir in self.atk_range[key]:
                 for _enemy in _enemies:
-                    if _enemy.position ==  tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
+                    if _enemy.position == tuple([_rs + _p for _rs, _p in zip(_dir, self.position)]):
                         _enemy.hp -= 1
                         self.f_attack_hit = True
                 attacking.append(_dir)
@@ -175,10 +177,14 @@ class Player(Charactor):
 
 
 class Enemy(Charactor):
-    def __init__(self, _pos, _direction, _section, _type: str=None):
+    def __init__(self, _pos, _direction, _section):
+        self.type = "2move" if 0 == random.randrange(5) else None
+        hp = Setting.Enemy.hp
+        if self.type == "2move":
+            hp -= 1
         super().__init__(
-            _pos,#tuple 
-            Setting.Enemy.hp,
+            _pos,  # tuple
+            hp,
             Setting.Enemy.atk,
             Setting.Enemy.move_range,
             Setting.Enemy.atk_range,
@@ -186,48 +192,55 @@ class Enemy(Charactor):
             _section,
         )
 #        self.mode = Setting.Enemy.options
-        self.type = _type
         self.__mode = False
         self.move_count = 0
         self.f_attack = False
         self.f_clear = False
         return
-    
+
     def move_process(self, _map, _player, _enemies):
 
         self.section = _map[self.position[1]][self.position[0]]
         now_pos = deepcopy(self.position)
 
-        if self.__mode :#プレイヤーを追いかけるモードの時
+        if self.__mode:  # プレイヤーを追いかけるモードの時
             if abs(self.position.x - _player.position.x) + abs(self.position.y - _player.position.y) == 1:
                 self.f_attack = True
                 _player.hp -= 1
-            
-            else:
-                result_search = self.breadth_first_search(_map, _player)#返り血は、タプル（次のマスからゴールまでのマス、[0]が次のマス）
-                move = tuple([
-                    _rs - _p
-                    for _rs, _p in zip(result_search, self.position)
-                ])
 
-                self.position.move(move)
-                if self.check_wall(_map) or self.check_enemy(_enemies) > 1:
-                    self.position = now_pos
-                    return
-                
-        else:#プレイヤーを追いかけないとき
+            else:
+                move_num = 1
+                if self.type == "2move":
+                    move_num += 1
+                for _ in range(move_num):
+                    if abs(self.position.x - _player.position.x) + abs(self.position.y - _player.position.y) == 1:
+                        break
+                    result_search = self.breadth_first_search(
+                        _map, _player)  # 返り血は、タプル（次のマスからゴールまでのマス、[0]が次のマス）
+                    move = tuple([
+                        _rs - _p
+                        for _rs, _p in zip(result_search, self.position)
+                    ])
+
+                    self.position.move(move)
+                    if self.check_wall(_map) or self.check_enemy(_enemies) > 1:
+                        self.position = now_pos
+                        return
+
+        else:  # プレイヤーを追いかけないとき
             if not self.section == -6 and self.section == _player.section:
                 self.__mode = True
                 return
 
-            key = tuple(self.move_range.keys())[random.randrange(len(self.move_range))]
+            key = tuple(self.move_range.keys())[
+                random.randrange(len(self.move_range))]
             self.position.move(self.move_range[key])
             if self.check_wall(_map) or self.position == _player.position:
                 self.position = now_pos
             else:
                 ...
-            
-    def search_direction(self, _map, poses:list , distance, goal):
+
+    def search_direction(self, _map, poses: list, distance, goal):
         direction = ((0, 1), (0, -1), (1, 0), (-1, 0))
         to_poses = []
         for pos in poses:
@@ -236,18 +249,19 @@ class Enemy(Charactor):
                 if _map[to_pos.y][to_pos.x] <= -3:
                     _map[to_pos.y][to_pos.x] = distance
                     to_poses.append(to_pos)
-        
+
         if len(to_poses) == 0:
             return _map, False
-        
+
         if sum([goal.x == t[0] and goal.y == t[1] for t in to_poses]) > 0:
             return _map, True
 
         _map, flag = self.search_direction(_map, to_poses, distance + 1, goal)
-        if flag: return _map, True
+        if flag:
+            return _map, True
 
         return _map, False
-        
+
     def breadth_first_search(self, _map, goal: Player):
         direction = ((0, 1), (0, -1), (1, 0), (-1, 0))
         _search_map = deepcopy(_map)
@@ -370,21 +384,21 @@ class PlayerStatus:
 
     ...
 
-    
+
 if __name__ == '__main__':
     map_ = \
         [
             [
                 -5 if 0 < x < 24 and 0 < y < 19 else -1
                 for x in range(25)
-            ] 
+            ]
             for y
-             in range(20)
+            in range(20)
         ]
-    
+
     enemy = Enemy((13, 12), 0, 0, "")
     enemy.move_process(map_, Player(), [])
     print(enemy.position)
-    
+
     for line in map_:
         print(line)
