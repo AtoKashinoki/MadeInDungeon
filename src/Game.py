@@ -10,18 +10,17 @@ This file contain game class of MadeInDungeon.
 from src import create_dungeon
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
-from src.Object import Player, Enemy
+from src.Object import Player, Enemy, AI
 from time import sleep
-from src.GameLoopEngine import GameLoop
+from src.GameLoopEngine import GameLoop, ai_mode
 from src.Setting import Setting
-from src.AI import run_ai
+from src.MyAI import RUN_AI
 
 
 """ Game processes """
 
 
 human_play_mode: bool = Setting.PlayMode.engine
-ai_mode: bool = Setting.PlayMode.ai_mode
 
 
 start_text = (
@@ -264,9 +263,9 @@ def game_process():
     print(rule2, end="")
     input()
     if ai_mode:
-        player = run_ai((0, 0), 0, 0)
+        player = AI(ai_process=RUN_AI)
     else:
-        player = Player((5, 5), 0, 0)
+        player = Player()
         ...
     for i in range(Setting.Map.stage_num):
         hierarchy_process(player)

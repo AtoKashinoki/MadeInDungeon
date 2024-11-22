@@ -41,15 +41,15 @@ class Charactor(Object):
 class Player(Charactor):
     __visibility_map: list[list[int]] | None
 
-    def __init__(self, _pos, _direction, _section):
+    def __init__(self):
         super().__init__(
-            _pos,  # tuple
+            (0, 0),  # tuple
             Setting.Player.hp,
             Setting.Player.atk,
             Setting.Player.move_range,
             Setting.Player.atk_range,
-            _direction,
-            _section
+            0,
+            0,
         )
         self.visibility = Setting.Player.visibility
         self.__visibility_map = None
@@ -63,7 +63,9 @@ class Player(Charactor):
         return
 
     @property
-    def visibility_map(self): return self.__visibility_map
+    def visibility_map(self): return tuple([
+        *map(tuple, self.__visibility_map)
+    ])
 
     def reset_visibility(self, d_map):
         self.__visibility_map = \
@@ -307,7 +309,67 @@ class Enemy(Charactor):
             return route[0]
 
         return route[1]
-            
+
+    ...
+
+
+class AI(Player):
+    """ AI player class """
+
+    """ values """
+    __ai_process = None
+
+    def __init__(self, ai_process):
+        super().__init__()
+        self.__ai_process = ai_process
+        return
+
+    def game_loop_mp(self, _map, _enemies, _):
+
+        visibility_poss = (
+            (x, y)
+            for y in range(len(_map))
+            for x in range(len(_map[y]))
+            if not self.visibility_map[y][x] == -101
+        )
+
+        visibility_enemies = tuple(
+            _enemy
+            for _enemy in _enemies
+            if _enemy.position in visibility_poss
+        )
+
+        player_status = PlayerStatus(self)
+
+        input_key: str = self.__ai_process.__move_process__(
+            self.visibility_map,
+            player_status,
+            visibility_enemies,
+        )
+
+        return super().game_loop_mp(_map, _enemies, input_key)
+
+    ...
+
+
+class PlayerStatus:
+    hp: int
+    atk: int
+    move_range: dict[str, tuple[int, int]]
+    atk_range: dict[str, [int, int]]
+    position: Position
+
+    def __init__(self, player: Player):
+        """ Setting values """
+        self.hp = player.hp
+        self.atk = player.atk
+        self.move_range = player.move_range
+        self.atk_range = player.atk_range
+        self.position = player.position
+        return
+
+    ...
+
     
 if __name__ == '__main__':
     map_ = \
@@ -321,7 +383,7 @@ if __name__ == '__main__':
         ]
     
     enemy = Enemy((13, 12), 0, 0, "")
-    enemy.move_process(map_, Player((5, 5), 0, 0), [])
+    enemy.move_process(map_, Player(), [])
     print(enemy.position)
     
     for line in map_:

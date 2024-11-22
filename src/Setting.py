@@ -1,3 +1,5 @@
+from turtle import Turtle
+
 from CodingTools.Inheritance import DataClass
 
 
@@ -57,5 +59,5 @@ class Setting():
 
     class PlayMode(DataClass):
         engine = True
-        ai_mode = False
+        ai_mode = True
         ...

@@ -5,8 +5,12 @@ from time import sleep
 from src.Object import Player, Enemy
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
+from src.Setting import Setting
 from src.Engine import ApplicationEngine, Exit
 from src import Texture
+
+
+ai_mode: bool = Setting.PlayMode.ai_mode
 
 
 rule = (
@@ -68,7 +72,6 @@ class GameLoop(ApplicationEngine):
 
     def update_enemies(self):
         if self.player.move:
-            self.debug_print("running!!")
             for enemy in self.enemies:
                 enemy.move_process(self.d_map, self.player, self.enemies)
             self.player.move = False
@@ -110,7 +113,7 @@ class GameLoop(ApplicationEngine):
                 self.render_update_flag = True
                 ...
 
-            if input_keys in (*self.player.move_range, *self.player.atk_range):
+            if input_keys in (*self.player.move_range, *self.player.atk_range) or ai_mode:
                 self.not_move = False
                 self.attacking.append([self.player.game_loop_mp(self.d_map, self.enemies, input_keys), 1])
                 self.render_update_flag = True

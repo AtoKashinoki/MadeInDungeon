@@ -345,7 +345,7 @@ def generate_dungeon(width, height, _enemies):
 
     player_pos = player_room[rand]
     #key_coordinates = matching_coordinates_key_room[random.randint(0, len(matching_coordinates_key_room)) - 1]
-    Player(player_pos, 0, Player_room)
+    Player()
     dungeon[player_pos[1]][player_pos[0]] = -100
 
     return dungeon
