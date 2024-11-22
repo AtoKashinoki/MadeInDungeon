@@ -53,3 +53,9 @@ class Setting():
     
     class Map(DataClass):
         stage_num = 3
+        ...
+
+    class PlayMode(DataClass):
+        engine = True
+        ai_mode = True
+        ...

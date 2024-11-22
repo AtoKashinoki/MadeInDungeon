@@ -7,7 +7,6 @@ This file contain game class of MadeInDungeon.
 """ imports """
 
 
-from copy import deepcopy
 from src import create_dungeon
 from CodingTools.Definition import Msvcrt
 Key = Msvcrt.Key
@@ -15,12 +14,14 @@ from src.Object import Player, Enemy
 from time import sleep
 from src.GameLoopEngine import GameLoop
 from src.Setting import Setting
+from src.AI import run_ai
 
 
 """ Game processes """
 
 
-human_play_mode: bool = True #
+human_play_mode: bool = Setting.PlayMode.engine
+ai_mode: bool = Setting.PlayMode.ai_mode
 
 
 start_text = (
@@ -262,7 +263,11 @@ def game_process():
     input()
     print(rule2, end="")
     input()
-    player = Player((5, 5), 0, 0)
+    if ai_mode:
+        player = run_ai((0, 0), 0, 0)
+    else:
+        player = Player((5, 5), 0, 0)
+        ...
     for i in range(Setting.Map.stage_num):
         hierarchy_process(player)
         if player.hp <= 0:
