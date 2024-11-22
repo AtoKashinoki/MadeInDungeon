@@ -104,8 +104,6 @@ class GameLoop(ApplicationEngine):
                 if _id in Msvcrt.alphabet_dict or _id in Msvcrt.number_dict
             ])
 
-            self.debug_print(input_keys)
-
             if input_keys == "h":
                 help_()
                 self.render_update_flag = True
