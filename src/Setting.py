@@ -5,6 +5,8 @@ class Setting():
     class Player(DataClass):
         hp: int = 5
         atk: int = 1
+        max_item = 5
+        max_hp = 5
         move_range: dict[str, tuple[int, int]] = {
             "w": (0, -1),
             "wd": (1, -1),
@@ -18,8 +20,8 @@ class Setting():
             "a": (-1, 0),
             "wa": (-1, -1),
             "aw": (-1, -1),
-
         }
+
         atk_range: dict[str, tuple[int, int]] = {
             "W": ((-1, -1), (0, -1), (1, -1)),
             "D": ((1, -1), (1, 0), (1, 1)),
@@ -57,5 +59,6 @@ class Setting():
 
     class PlayMode(DataClass):
         engine = True
-        ai_mode = False
+        ai_mode = False#EngineをFalseで従来にもでぃる
+                        #AIが使えるモードに変わる。
         ...

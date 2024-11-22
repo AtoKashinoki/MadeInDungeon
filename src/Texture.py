@@ -18,6 +18,7 @@ def convert(_map: list[list[int]]) -> list[list[str]]:
             "階" if d == -2 else
             "🔑" if d == -5 else
             "💎" if d == -4 else
+            "🍎" if d == -103 else
             "　"
             for d in line
         ]

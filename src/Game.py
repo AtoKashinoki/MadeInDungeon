@@ -169,6 +169,11 @@ def hierarchy_process(player: Player, clear: bool = False):
         enemies = []
 
     player.f_get_key = False
+    player.items = [
+        item
+        for item in player.items
+        if not item == "🔑"
+    ]
 
     if human_play_mode:
         game_loop_ = GameLoop(d_map, player, enemies)
@@ -276,7 +281,6 @@ def game_process():
                 game_process()
             break
         else:
-            player.recovery_hp(1)
             print(f"\n\n\n{i + 1}F Clear\n\n\nNext floor...\n\n")
     else:
         hierarchy_process(player, True)

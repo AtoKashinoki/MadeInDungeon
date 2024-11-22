@@ -1,7 +1,7 @@
 import random
 from CodingTools.Types import Position
 from src.Object import Enemy, Player
-
+from copy import deepcopy
 class Leaf:
     # MIN_LEAF_SIZE：リーフの分割を行う際の最小サイズを指定している。
     # 各リーフがこれより小さく分割されることはなく、最小でもこのサイズを確保するようにしてるよ。
@@ -156,6 +156,7 @@ def generate_dungeon(width, height, _enemies):
                         split_successful = True
 
     """
+
     数値の意味
     -1    : 壁
     -2    : 階段
@@ -164,7 +165,11 @@ def generate_dungeon(width, height, _enemies):
     -5    : 鍵
     -6    : 道
     -7~-n : 部屋番号
+    -99   : 敵
+    -100  : プレイヤー
+
     """
+    objects = [-1, -2, -3, -4, -5, -6, -99, -100]
     # 部屋と認識されている場所に番号を入れる
     root.create_rooms(0)
     room_number = -7
@@ -348,8 +353,32 @@ def generate_dungeon(width, height, _enemies):
     Player(player_pos, 0, Player_room)
     dungeon[player_pos[1]][player_pos[0]] = -100
 
+    "アイテム生成"
+    recovery_item_pos = create_item_pos(dungeon, player_pos, objects, _room_dic, room_numbers)
+    print(recovery_item_pos)
+    dungeon[recovery_item_pos[1]][recovery_item_pos[0]] = -103
+    objects.append(dungeon[recovery_item_pos[1]][recovery_item_pos[0]])
+
     return dungeon
 
+def create_item_pos(_map, player:Player, object_map:list, room_dic:dict[str, tuple], room_numbers:list):
+    _map = deepcopy(_map)
+
+    empty_cell = []
+    for _room_number in room_numbers:#
+        _room_space = []
+        now_room = room_dic[_room_number]
+        for x in range((now_room[0]), (now_room[0] + now_room[2])):
+            for y in range((now_room[1]), (now_room[1] + now_room[3])):
+                if _map[y][x] not in object_map:
+                    _room_space.append((x, y))
+        empty_cell.append(_room_space)
+    #print(empty_cell)
+
+    empty_pos = empty_cell[random.randint(0, len(empty_cell) - 1)]
+    empty_pos = empty_pos[random.randint(0, len(empty_pos) - 1)]
+    
+    return empty_pos#tuple()
 
 def display_dungeon(_dungeon, _player, _enemies):
     _dungeon = \
@@ -359,6 +388,7 @@ def display_dungeon(_dungeon, _player, _enemies):
                 "階" if cell == -2 else
                 "🔑" if cell == -5 else
                 "💎" if cell == -4 else
+                "🍎" if cell == -103 else
                 "　"
                 for cell in row
             ]
@@ -366,13 +396,13 @@ def display_dungeon(_dungeon, _player, _enemies):
         ]
 
     _dungeon[_player.position.y][_player.position.x] = "😀"
-
+    
     [
         _dungeon[y].__setitem__(x, "👹")
         for x, y in map(lambda x: x.position, _enemies)
         if not _player.visibility_map[y][x] == -101
     ]
-
+    
     for row in _dungeon:
         print("".join(row))
 
@@ -409,10 +439,11 @@ def clear_loom(_player: Player):
     return map_, _player
 
 
-if __name__ == '__main__':
-    dungeon, player, enemies = run()
+def test():
+    dungeon, player, enemies = run(Player((0,0),0,0))
     display_dungeon(
         dungeon,
         player,
         enemies
     )
+

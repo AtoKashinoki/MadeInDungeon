@@ -59,13 +59,19 @@ class Player(Charactor):
         self.f_get_key = False
         self.f_clear = False
         self.item_diamond = False
+        self.max_items = Setting.Player.max_item
+        self.max_hp = Setting.Player.max_hp
+        self.items = []
+        self.f_get_apple = 0
+
         self.move = False
+    
         return
 
     @property
-    def visibility_map(self): return self.__visibility_map
+    def visibility_map(self): return self.__visibility_map#プレイヤーの見えてる範囲のMAPを返す
 
-    def reset_visibility(self, d_map):
+    def reset_visibility(self, d_map):#-101にぷれいやーが見えている範囲であることを定義する。
         self.__visibility_map = \
             [
                 [
@@ -76,7 +82,7 @@ class Player(Charactor):
             ]
         return
 
-    def update_visibility(self, d_map):
+    def update_visibility(self, d_map):#マップの更新をしてプレイヤーのみえる範囲が増える
         if not self.f_clear:
             [
                 self.__visibility_map[self.position.y+y].__setitem__(
@@ -116,6 +122,11 @@ class Player(Charactor):
                     self.item_key = True
                     _map[self.position[1]][self.position[0]] = -6
                     ...
+
+                if _map[self.position[1]][self.position[0]] == -103:
+                    self.f_get_apple += 1
+                    _map[self.position[1]][self.position[0]] = -6
+
                 return
 
             elif key in self.atk_range:
@@ -146,10 +157,20 @@ class Player(Charactor):
                 self.position = deepcopy(now_pos)
                 return ()
             if _map[self.position[1]][self.position[0]] == -5:
-                self.f_get_key = True
-                self.item_key = True
-                _map[self.position[1]][self.position[0]] = -6
+                if not len(self.items) == self.max_items:
+                    self.f_get_key = True
+                    self.item_key = True
+                    _map[self.position[1]][self.position[0]] = -6
+                    self.items.append("🔑")
                 ...
+
+            if _map[self.position[1]][self.position[0]] == -103:
+                if not len(self.items) == self.max_items:
+                    self.f_get_apple += 1
+                    _map[self.position[1]][self.position[0]] = -6
+                    self.items.append("🍎")
+                ...
+
             self.move = True
             return ()
 
@@ -166,8 +187,20 @@ class Player(Charactor):
             return attacking
 
         return ()
+    
+    def use_item(self, number:int):
+        if len(self.items) > number-1:
+            index = number - 1
+            if self.items[index] == "🍎":
+                self.recovery_hp(1)
+                del self.items[index]
 
+        return
+    
     def recovery_hp(self, _hp_rec):
+        if self.hp >= self.max_hp:
+            return
+        
         self.hp += _hp_rec
         return
 
@@ -307,8 +340,7 @@ class Enemy(Charactor):
             return route[0]
 
         return route[1]
-            
-    
+
 if __name__ == '__main__':
     map_ = \
         [

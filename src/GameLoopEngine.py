@@ -91,16 +91,41 @@ class GameLoop(ApplicationEngine):
                 if Key.Del in self.input: raise Exit
 
             input_keys = "".join([
-                Msvcrt.alphabet_dict[_id]
+                Msvcrt.alphabet_dict[_id] if _id in Msvcrt.alphabet_dict else 
+                Msvcrt.number_dict[_id] 
                 for _id in self.input
-                if _id in Msvcrt.alphabet_dict
+                if _id in Msvcrt.alphabet_dict or _id in Msvcrt.number_dict
             ])
+
+            self.debug_print(input_keys)
 
             if input_keys == "h":
                 help_()
                 self.render_update_flag = True
                 ...
+            elif input_keys in ["1", "2", "3", "4", "5"]:
+                if input_keys == "1":
+                    self.player.use_item(1)
+                    ...
 
+                elif input_keys == "2":
+                    self.player.use_item(2)
+                    ...
+
+                elif input_keys == "3":
+                    self.player.use_item(3)
+                    ...
+
+                elif input_keys == "4":
+                    self.player.use_item(4)
+                    ...
+
+                elif input_keys == "5":
+                    self.player.use_item(5)
+                    ...
+                self.render_update_flag = True
+                ...
+                
             for i in range(len(self.attacking)):
                 self.attacking[i][1] -= 1
                 ...
@@ -158,16 +183,22 @@ class GameLoop(ApplicationEngine):
                 ...
             ...
         texture = "{}" * len(self.d_map[0])
-
+        
         self.print()
         self.print("Dungeon map")
         [self.print(texture.format(*_line)) for _line in print_map]
+
         self.print(f"{player.position=}")
         self.print(f"{player.hp=}")
         self.print()
-        if player.f_get_key:
-            self.print("Have key🔑")
-            ...
+
+        for item in player.items:
+            self.print(f"［{item}］", end = "")
+
+        for noneitem in range(-(len(player.items) - player.max_items)):
+            self.print("［　］", end = "")
+
+        self.print()
         if player.f_attack:
             self.print("Player attack!")
             player.f_attack = False

@@ -11,6 +11,7 @@ This file contain MadeInDungeon test process.
 import sys
 from src.Engine import ApplicationEngine, Exit
 from CodingTools.Definition import Msvcrt
+from src.create_dungeon import test
 Key = Msvcrt.Key
 
 
@@ -37,6 +38,4 @@ class TypeWriter(ApplicationEngine):
 
 
 if __name__ == '__main__':
-    game = TypeWriter()
-    system_key = game.exe()
-    sys.exit(system_key)
+    test()

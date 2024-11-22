@@ -113,6 +113,18 @@ class Msvcrt(DefinitionSkeleton):
 
     rev_alphabet_dict: dict[int, str] = \
         dict(zip(alphabet, alphabet_keys))
+    
+    number: str = (
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+    )
 
+    number_keys = tuple([
+         Key.n0, Key.n1, Key.n2, Key.n3, Key.n4, Key.n5, Key.n6, Key.n7,
+         Key.n8, Key.n9
+    ])
+
+    number_dict: dict[int, str]= \
+        dict(zip(number_keys, number))
+    
     ...
 
