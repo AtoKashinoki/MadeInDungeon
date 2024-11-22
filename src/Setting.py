@@ -59,5 +59,5 @@ class Setting():
 
     class PlayMode(DataClass):
         engine = True
-        ai_mode = True
+        ai_mode = False
         ...
