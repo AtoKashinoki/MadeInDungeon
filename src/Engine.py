@@ -136,6 +136,19 @@ class Rendering(ABC):
     ) -> None:
         """ print text """
         return
+
+    @abstractmethod
+    def debug_print(
+            self,
+            *values: object,
+            sep = " ", end = "\n",
+            file: str | None = None,
+            flush: Literal[False] = False,
+            reset: bool = False,
+    ) -> None:
+        """ debug text """
+        return
+
     @abstractmethod
     def render(self, __rendering__) -> None:
         """ render function """
@@ -152,6 +165,7 @@ class Console(Rendering):
 
     # instances
     __frame_text: str
+    __debug_text: str
 
     """ properties """
 
@@ -159,6 +173,7 @@ class Console(Rendering):
 
     def __init__(self):
         self.__frame_text = ""
+        self.__debug_text = ""
         return
 
     def print(
@@ -172,11 +187,30 @@ class Console(Rendering):
         self.__frame_text += sep.join(str_values) + end
         return
 
+    def debug_print(
+            self,
+            *values: object,
+            sep = " ", end = "\n",
+            file: str | None = None,
+            flush: Literal[False] = False,
+            reset: bool = False,
+    ) -> None:
+        if reset:
+            self.__debug_text = ""
+            return
+
+        str_values = map(str, values)
+        self.__debug_text += sep.join(str_values) + end
+        return
+
     def render(self, __rendering__) -> None:
         system('cls')
         self.__frame_text = ""
         __rendering__()
         print(self.__frame_text, end="")
+        if len(self.__debug_text) > 0:
+            print("-"*20, self.__debug_text, "-"*20, sep="\n")
+            ...
         return
 
     ...
@@ -252,6 +286,22 @@ class ApplicationEngine(ABC):
             *values,
             sep = sep, end = end,
             file = file, flush = flush
+        )
+        return
+
+    def debug_print(
+            self,
+            *values: object,
+            sep = " ", end = "\n",
+            file: str | None = None,
+            flush: Literal[False] = False,
+            reset: bool = False,
+    ) -> None:
+        self.__rendering_sys.debug_print(
+            *values,
+            sep = sep, end = end,
+            file = file, flush = flush,
+            reset = reset,
         )
         return
 

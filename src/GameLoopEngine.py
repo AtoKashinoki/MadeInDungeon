@@ -68,6 +68,7 @@ class GameLoop(ApplicationEngine):
 
     def update_enemies(self):
         if self.player.move:
+            self.debug_print("running!!")
             for enemy in self.enemies:
                 enemy.move_process(self.d_map, self.player, self.enemies)
             self.player.move = False
@@ -75,6 +76,7 @@ class GameLoop(ApplicationEngine):
         return
 
     def __update__(self):
+        self.debug_print(reset=True)
         if self.attack_f:
             sleep(0.15)
             self.update_enemies()
@@ -125,8 +127,7 @@ class GameLoop(ApplicationEngine):
             if self.d_map[self.player.position[1]][self.player.position[0]] in (-2, -4):
                 raise Exit
 
-            if not len(self.attacking) > 0:
-                self.update_enemies()
+            self.update_enemies()
 
             if self.player.hp <= 0:
                 raise Exit
