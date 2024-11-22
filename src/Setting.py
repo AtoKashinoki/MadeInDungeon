@@ -1,3 +1,5 @@
+from turtle import Turtle
+
 from CodingTools.Inheritance import DataClass
 
 
