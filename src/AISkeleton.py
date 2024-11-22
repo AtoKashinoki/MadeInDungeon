@@ -3,7 +3,7 @@
 
 This file contain game AI skeleton.
 """
-from distutils.file_util import move_file
+
 
 """ import """
 from abc import ABC, abstractmethod
