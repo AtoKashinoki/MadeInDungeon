@@ -81,9 +81,10 @@ class GameLoop(ApplicationEngine):
         return
 
     def __update__(self):
-        self.debug_print(reset=True)
         if self.attack_f:
-            sleep(0.15)
+            if not ai_mode:
+                sleep(0.15)
+
             self.update_enemies()
             self.render_update_flag = True
             self.attacking = tuple()
@@ -143,8 +144,9 @@ class GameLoop(ApplicationEngine):
 
             if input_keys in (*self.player.move_range, *self.player.atk_range) or ai_mode:
                 self.not_move = False
-                self.attacking.append([self.player.game_loop_mp(
-                    self.d_map, self.enemies, input_keys), 1])
+                result = self.player.game_loop_mp(self.d_map, self.enemies, input_keys)
+                if not len(result) == 0:
+                    self.attacking.append([result, 1])
                 self.render_update_flag = True
                 if not self.player.move:
                     self.not_move = True
@@ -159,7 +161,8 @@ class GameLoop(ApplicationEngine):
             if self.d_map[self.player.position[1]][self.player.position[0]] in (-2, -4):
                 raise Exit
 
-            self.update_enemies()
+            if len(self.attacking) == 0:
+                self.update_enemies()
 
             if self.player.hp <= 0:
                 raise Exit

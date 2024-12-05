@@ -428,7 +428,7 @@ if __name__ == '__main__':
             in range(20)
         ]
 
-    enemy = Enemy((13, 12), 0, 0, "")
+    enemy = Enemy((13, 12), 0, 0)
     enemy.move_process(map_, Player(), [])
     print(enemy.position)
 

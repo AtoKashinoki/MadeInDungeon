@@ -16,6 +16,8 @@ from threading import Thread
 import msvcrt
 from CodingTools.Inheritance import DataClass
 from CodingTools.Definition import SystemKey
+from src.Setting import Setting
+ai_mode = Setting.PlayMode.ai_mode
 
 
 """ errors """
@@ -204,7 +206,8 @@ class Console(Rendering):
         return
 
     def render(self, __rendering__) -> None:
-        system('cls')
+        if not ai_mode:
+            system('cls')
         self.__frame_text = ""
         __rendering__()
         print(self.__frame_text, end="")
