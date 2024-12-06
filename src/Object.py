@@ -381,7 +381,7 @@ class AI(Player):
         )
 
         visibility_enemies = tuple(
-            _enemy
+            deepcopy(_enemy)
             for _enemy in _enemies
             if _enemy.position in visibility_poss
         )
