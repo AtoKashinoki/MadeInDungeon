@@ -373,7 +373,7 @@ class AI(Player):
 
     def game_loop_mp(self, _map, _enemies, _):
 
-        visibility_poss = (
+        visibility_poss = tuple(
             (x, y)
             for y in range(len(_map))
             for x in range(len(_map[y]))
@@ -385,6 +385,8 @@ class AI(Player):
             for _enemy in _enemies
             if _enemy.position in visibility_poss
         )
+
+        print(visibility_enemies)
 
         player_status = PlayerStatus(self)
 
