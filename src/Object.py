@@ -386,8 +386,6 @@ class AI(Player):
             if _enemy.position in visibility_poss
         )
 
-        print(visibility_enemies)
-
         player_status = PlayerStatus(self)
 
         input_key: str = self.__ai_process.__move_process__(
