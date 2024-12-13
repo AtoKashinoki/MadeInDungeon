@@ -405,6 +405,7 @@ class PlayerStatus:
     move_range: dict[str, tuple[int, int]]
     atk_range: dict[str, [int, int]]
     position: Position
+    items: list
 
     def __init__(self, player: Player):
         """ Setting values """
@@ -413,6 +414,7 @@ class PlayerStatus:
         self.move_range = player.move_range
         self.atk_range = player.atk_range
         self.position = player.position
+        self.items = player.items
         return
 
     ...
