@@ -150,6 +150,29 @@ class Player(Charactor):
 
         key = input_key
 
+        if key in ["1", "2", "3", "4", "5"]:
+            if key == "1":
+                self.use_item(1)
+                ...
+
+            elif key == "2":
+                self.use_item(2)
+                ...
+
+            elif key == "3":
+                self.use_item(3)
+                ...
+
+            elif key == "4":
+                self.use_item(4)
+                ...
+
+            elif key == "5":
+                self.use_item(5)
+                ...
+            ...
+
+
         if key in self.move_range:
             self.position.move(self.move_range[key])
             if _map[self.position[1]][self.position[0]] == -2 and self.item_key:
@@ -174,29 +197,6 @@ class Player(Charactor):
                     _map[self.position[1]][self.position[0]] = -6
                     self.items.append("🍎")
                 ...
-
-            elif key in ["1", "2", "3", "4", "5"]:
-                if key == "1":
-                    self.use_item(1)
-                    ...
-
-                elif key == "2":
-                    self.use_item(2)
-                    ...
-
-                elif key == "3":
-                    self.use_item(3)
-                    ...
-
-                elif key == "4":
-                    self.use_item(4)
-                    ...
-
-                elif key == "5":
-                    self.use_item(5)
-                    ...
-                ...
-
             self.move = True
             return ()
 
@@ -220,7 +220,7 @@ class Player(Charactor):
             if self.items[index] == "🍎":
                 self.recovery_hp(1)
                 del self.items[index]
-
+                self.move = True
         return
     
     def recovery_hp(self, _hp_rec):
