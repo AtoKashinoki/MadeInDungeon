@@ -120,7 +120,7 @@ class GameLoop(ApplicationEngine):
                 self.render_update_flag = True
                 ...
 
-            if input_keys in (*self.player.move_range, *self.player.atk_range) or ai_mode:
+            if input_keys in (*self.player.move_range, *self.player.atk_range, *[f"{i+1}" for i in range(5)]) or ai_mode:
                 self.not_move = False
                 result = self.player.game_loop_mp(self.d_map, self.enemies, input_keys)
                 if not len(result) == 0:
@@ -128,6 +128,11 @@ class GameLoop(ApplicationEngine):
                 self.render_update_flag = True
                 if not self.player.move:
                     self.not_move = True
+                ...
+
+            if self.player.render_f:
+                self.player.render_f = False
+                self.render_update_flag = True
                 ...
 
             self.enemies = [
