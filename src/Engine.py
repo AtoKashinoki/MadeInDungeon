@@ -17,7 +17,7 @@ import msvcrt
 from CodingTools.Inheritance import DataClass
 from CodingTools.Definition import SystemKey
 from src.Setting import Setting
-ai_mode = Setting.PlayMode.ai_mode
+display_update_mode = Setting.PlayMode.display_update_mode
 
 
 """ errors """
@@ -206,8 +206,7 @@ class Console(Rendering):
         return
 
     def render(self, __rendering__) -> None:
-        if not ai_mode:
-            system('cls')
+        if display_update_mode: system('cls')
         self.__frame_text = ""
         __rendering__()
         print(self.__frame_text, end="")

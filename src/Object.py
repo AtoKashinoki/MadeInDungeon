@@ -65,7 +65,7 @@ class Player(Charactor):
         self.max_hp = Setting.Player.max_hp
         self.items = []
         self.f_get_apple = 0
-
+        self.render_f = False
         self.move = False
     
         return
@@ -170,7 +170,8 @@ class Player(Charactor):
             elif key == "5":
                 self.use_item(5)
                 ...
-            ...
+            self.render_f = True
+            return ()
 
 
         if key in self.move_range:
@@ -220,7 +221,6 @@ class Player(Charactor):
             if self.items[index] == "🍎":
                 self.recovery_hp(1)
                 del self.items[index]
-                self.move = True
         return
     
     def recovery_hp(self, _hp_rec):
