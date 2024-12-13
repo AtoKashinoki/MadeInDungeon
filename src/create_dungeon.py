@@ -435,7 +435,7 @@ def clear_loom(_player: Player):
             for y in range(height)
         ]
     map_[5][width//2] = -4
-    _player.position = Position(width//2, -3)
+    _player.position = Position(width//2, height-3-1)
     return map_, _player
 
 

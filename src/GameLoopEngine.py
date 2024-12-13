@@ -109,28 +109,6 @@ class GameLoop(ApplicationEngine):
                 help_()
                 self.render_update_flag = True
                 ...
-            elif input_keys in ["1", "2", "3", "4", "5"]:
-                if input_keys == "1":
-                    self.player.use_item(1)
-                    ...
-
-                elif input_keys == "2":
-                    self.player.use_item(2)
-                    ...
-
-                elif input_keys == "3":
-                    self.player.use_item(3)
-                    ...
-
-                elif input_keys == "4":
-                    self.player.use_item(4)
-                    ...
-
-                elif input_keys == "5":
-                    self.player.use_item(5)
-                    ...
-                self.render_update_flag = True
-                ...
                 
             for i in range(len(self.attacking)):
                 self.attacking[i][1] -= 1

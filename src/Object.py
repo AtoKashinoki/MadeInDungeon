@@ -175,6 +175,28 @@ class Player(Charactor):
                     self.items.append("🍎")
                 ...
 
+            elif key in ["1", "2", "3", "4", "5"]:
+                if key == "1":
+                    self.use_item(1)
+                    ...
+
+                elif key == "2":
+                    self.use_item(2)
+                    ...
+
+                elif key == "3":
+                    self.use_item(3)
+                    ...
+
+                elif key == "4":
+                    self.use_item(4)
+                    ...
+
+                elif key == "5":
+                    self.use_item(5)
+                    ...
+                ...
+
             self.move = True
             return ()
 
