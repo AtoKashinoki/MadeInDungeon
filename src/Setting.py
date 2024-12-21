@@ -61,7 +61,7 @@ class Setting():
 
     class PlayMode(DataClass):
         engine = True
-        ai_mode = True#EngineをFalseで従来にもでぃる
+        ai_mode = False#EngineをFalseで従来にもでぃる
                         #AIが使えるモードに変わる。
         display_update_mode = True
         ...

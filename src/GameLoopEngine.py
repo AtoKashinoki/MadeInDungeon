@@ -1,7 +1,5 @@
 
 
-from src import Texture
-from src.Engine import ApplicationEngine, Exit
 from copy import deepcopy
 from time import sleep
 from src.Object import Player, Enemy
@@ -175,7 +173,7 @@ class GameLoop(ApplicationEngine):
         for attacking in self.attacking:
             for _dir in attacking[0]:
                 if print_map[pp.y+_dir[1]][pp.x+_dir[0]] in ("　", "👹"):
-                    print_map[pp.y+_dir[1]][pp.x+_dir[0]] = "##"
+                    print_map[pp.y+_dir[1]][pp.x+_dir[0]] = "\033[31m##\033[39m"
                     self.attack_f = True
                     ...
                 ...
